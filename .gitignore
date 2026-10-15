@@ -1,0 +1,62 @@
+# Python dependencies and generated caches
+.venv/
+venv/
+env/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+*.egg-info/
+
+# Installed applications, JavaScript dependencies, and build products
+/微信小程序/微信web开发者工具/
+node_modules/
+miniprogram_npm/
+dist/
+build/
+
+# Personal IDE and WeChat developer settings
+.idea/
+.vscode/
+project.private.config.json
+
+# Local configuration and private keys; keep safe example configurations
+.env
+.env.*
+!.env.example
+!.env.template
+secrets.*
+credentials.*
+*.pem
+*.key
+*.p12
+*.pfx
+
+# Database runtime data and backups; schema .sql scripts remain tracked
+*.db
+*.db-*
+*.sqlite
+*.sqlite3
+*.sqlite-*
+*.sqlite3-*
+*.dump
+*.sql.gz
+*.sql.zip
+*.bak
+**/dumps/
+**/backups/
+/数据库/data/
+/数据库/真实数据/
+
+# Logs, temporary files, and OS/Office generated files
+*.log
+logs/
+*.tmp
+*.temp
+~$*
+.DS_Store
+Thumbs.db
+Desktop.ini

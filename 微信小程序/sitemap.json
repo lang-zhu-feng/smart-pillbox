@@ -1,0 +1,9 @@
+{
+  "desc": "Demo 页面允许索引",
+  "rules": [
+    {
+      "action": "allow",
+      "page": "*"
+    }
+  ]
+}

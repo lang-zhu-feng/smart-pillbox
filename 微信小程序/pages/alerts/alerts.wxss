@@ -1,0 +1,162 @@
+.alert-overview {
+  display: flex;
+  align-items: center;
+  padding: 30rpx;
+  border-radius: 28rpx;
+  color: #ffffff;
+  background: linear-gradient(135deg, #b95746, #d37c69);
+}
+
+.overview-icon {
+  width: 72rpx;
+  height: 72rpx;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.18);
+  font-size: 36rpx;
+  font-weight: 700;
+}
+
+.overview-copy {
+  margin-left: 20rpx;
+}
+
+.overview-title {
+  font-size: 31rpx;
+  font-weight: 700;
+}
+
+.overview-sub {
+  margin-top: 7rpx;
+  font-size: 22rpx;
+  opacity: 0.78;
+}
+
+.toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 34rpx 4rpx 20rpx;
+}
+
+.toolbar-title {
+  font-size: 32rpx;
+  font-weight: 700;
+}
+
+.toolbar-action {
+  color: #167a67;
+  font-size: 24rpx;
+}
+
+.alert-card {
+  display: flex;
+  margin-bottom: 18rpx;
+  padding: 26rpx;
+  border-radius: 24rpx;
+  background: #ffffff;
+  box-shadow: 0 8rpx 26rpx rgba(36, 73, 63, 0.05);
+}
+
+.alert-card.unread {
+  border: 1rpx solid #efc6bd;
+}
+
+.alert-card.read {
+  opacity: 0.68;
+}
+
+.level-icon {
+  width: 58rpx;
+  height: 58rpx;
+  border-radius: 18rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  font-weight: 750;
+}
+
+.high .level-icon {
+  color: #b34f3f;
+  background: #fff0ed;
+}
+
+.info .level-icon {
+  color: #3478a3;
+  background: #eaf4fb;
+}
+
+.alert-main {
+  flex: 1;
+  min-width: 0;
+  margin-left: 18rpx;
+}
+
+.alert-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.alert-title {
+  font-size: 28rpx;
+  font-weight: 700;
+}
+
+.unread-dot {
+  width: 14rpx;
+  height: 14rpx;
+  margin-left: 16rpx;
+  border-radius: 50%;
+  background: #c65e4b;
+}
+
+.alert-detail {
+  margin-top: 10rpx;
+  color: #687772;
+  font-size: 23rpx;
+  line-height: 1.55;
+}
+
+.alert-foot {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 16rpx;
+  color: #9aa3a0;
+  font-size: 20rpx;
+}
+
+.level-label {
+  color: #956458;
+}
+
+.simulate-btn {
+  width: 100%;
+  margin-top: 28rpx;
+}
+
+.safety-card {
+  margin-top: 24rpx;
+  padding: 26rpx;
+  border-radius: 22rpx;
+  color: #63716d;
+  background: #eaf0ee;
+  font-size: 22rpx;
+  line-height: 1.85;
+}
+
+.safety-title {
+  margin-bottom: 6rpx;
+  color: #3f514c;
+  font-size: 25rpx;
+  font-weight: 700;
+}
+
+.safety-note {
+  margin-top: 8rpx;
+  color: #95620e;
+  font-size: 20rpx;
+}

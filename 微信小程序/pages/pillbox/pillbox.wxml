@@ -1,0 +1,64 @@
+<view class="page">
+  <view class="device-strip">
+    <view class="device-mark">药</view>
+    <view class="device-copy">
+      <view class="device-name">{{device.name}}</view>
+      <view class="device-meta">{{device.code}} · 电量 {{device.battery}}%</view>
+    </view>
+    <view class="online-badge" wx:if="{{device.online}}"><text></text>在线</view>
+    <view class="offline-badge" wx:else>离线</view>
+  </view>
+
+  <view class="intro">
+    <view class="intro-title">7 天 × 3 时段</view>
+    <view class="intro-copy">点击任意药格可查看药物详情；在待服药或逾期药格中可模拟一次开盒事件。</view>
+  </view>
+
+  <scroll-view scroll-x class="grid-scroll">
+    <view class="pill-grid">
+      <view class="grid-corner">时段</view>
+      <view
+        class="day-head {{index === todayIndex ? 'today-head' : ''}}"
+        wx:for="{{days}}"
+        wx:key="*this"
+      >
+        {{item}}
+        <text wx:if="{{index === todayIndex}}">今天</text>
+      </view>
+
+      <block wx:for="{{rows}}" wx:key="key" wx:for-item="row">
+        <view class="slot-head">
+          <view>{{row.name}}</view>
+          <text>{{row.startTime}}</text>
+        </view>
+        <view
+          class="pill-cell {{cell.statusClass}} {{cell.isToday ? 'today-cell' : ''}}"
+          wx:for="{{row.cells}}"
+          wx:key="id"
+          wx:for-item="cell"
+          data-id="{{cell.id}}"
+          bindtap="openTask"
+        >
+          <view class="cell-dot"></view>
+          <view class="cell-label">{{cell.shortLabel}}</view>
+          <view class="cell-count" wx:if="{{cell.medicines.length}}">{{cell.medicines.length}}种</view>
+          <view class="cell-count" wx:else>—</view>
+        </view>
+      </block>
+    </view>
+  </scroll-view>
+
+  <view class="legend card">
+    <view class="legend-item"><text class="legend-dot status-completed"></text>已完成</view>
+    <view class="legend-item"><text class="legend-dot status-reminding"></text>提醒中</view>
+    <view class="legend-item"><text class="legend-dot status-pending"></text>待服药</view>
+    <view class="legend-item"><text class="legend-dot status-overdue"></text>已逾期</view>
+    <view class="legend-item"><text class="legend-dot status-none"></text>无需服药</view>
+  </view>
+
+  <button class="danger-btn" bindtap="simulateOverdue">模拟一次“超时未开盒”</button>
+
+  <view class="tip">
+    Demo 中的药格事件为模拟数据。正式系统将由 ESP32 上传真实开盒事件。
+  </view>
+</view>

@@ -1,0 +1,46 @@
+<view class="page">
+  <view class="alert-overview">
+    <view class="overview-icon">!</view>
+    <view class="overview-copy">
+      <view class="overview-title">{{unreadCount ? unreadCount + ' 条提醒待查看' : '当前没有未读提醒'}}</view>
+      <view class="overview-sub">超时未开盒时，系统会生成家属异常通知</view>
+    </view>
+  </view>
+
+  <view class="toolbar">
+    <view class="toolbar-title">消息记录</view>
+    <view class="toolbar-action" bindtap="markAllRead">全部已读</view>
+  </view>
+
+  <view
+    class="alert-card {{item.read ? 'read' : 'unread'}} {{item.level === 'high' ? 'high' : 'info'}}"
+    wx:for="{{alerts}}"
+    wx:key="id"
+    data-id="{{item.id}}"
+    bindtap="openAlert"
+  >
+    <view class="level-icon">{{item.level === 'high' ? '!' : 'i'}}</view>
+    <view class="alert-main">
+      <view class="alert-head">
+        <view class="alert-title">{{item.title}}</view>
+        <view class="unread-dot" wx:if="{{!item.read}}"></view>
+      </view>
+      <view class="alert-detail">{{item.detail}}</view>
+      <view class="alert-foot">
+        <text>{{item.time}}</text>
+        <text class="level-label">{{item.levelLabel}}</text>
+      </view>
+    </view>
+  </view>
+
+  <button class="danger-btn simulate-btn" bindtap="simulateAlert">模拟生成一条漏服风险提醒</button>
+
+  <view class="safety-card">
+    <view class="safety-title">处理措施</view>
+    <view>1. 先联系老人确认实际情况；</view>
+    <view>2. 检查药盒是否断电或离线；</view>
+    <view>3. 多次联系未果，可联系社区联络员协助上门查看；</view>
+    <view>4. 如老人身体不适，请及时联系专业医疗人员。</view>
+    <view class="safety-note">社区联系人信息需由项目实际配置，当前 Demo 未填写真实联系方式。</view>
+  </view>
+</view>

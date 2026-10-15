@@ -1,0 +1,1044 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>安心药伴 · 微信小程序 Demo</title>
+  <style>
+    :root {
+      --green: #167a67;
+      --green-2: #31947f;
+      --green-soft: #e7f5f0;
+      --bg: #e9efed;
+      --page: #f4f7f6;
+      --card: #fff;
+      --text: #1d2b27;
+      --muted: #83908c;
+      --red: #bd5d4b;
+      --red-soft: #fff0ed;
+      --amber: #a36d12;
+      --amber-soft: #fff3d7;
+      --blue: #3478a3;
+      --shadow: 0 16px 50px rgba(34, 70, 60, .13);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background:
+        radial-gradient(circle at 15% 10%, rgba(72, 157, 137, .22), transparent 25%),
+        radial-gradient(circle at 85% 80%, rgba(67, 127, 155, .15), transparent 28%),
+        var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
+    }
+    button { font: inherit; }
+    .workspace {
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: minmax(260px, 360px) 390px;
+      justify-content: center;
+      align-items: center;
+      gap: 54px;
+      padding: 42px 28px;
+    }
+    .guide { max-width: 360px; }
+    .eyebrow {
+      display: inline-flex;
+      padding: 7px 12px;
+      border-radius: 20px;
+      color: var(--green);
+      background: rgba(255,255,255,.68);
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: .08em;
+    }
+    .guide h1 {
+      margin: 20px 0 10px;
+      font-size: 38px;
+      line-height: 1.18;
+      letter-spacing: -.02em;
+    }
+    .guide > p {
+      margin: 0;
+      color: #60716b;
+      font-size: 15px;
+      line-height: 1.75;
+    }
+    .demo-steps {
+      margin-top: 28px;
+      display: grid;
+      gap: 12px;
+    }
+    .step {
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+      padding: 14px;
+      border-radius: 16px;
+      background: rgba(255,255,255,.62);
+      backdrop-filter: blur(8px);
+    }
+    .step b {
+      width: 26px;
+      height: 26px;
+      flex: 0 0 26px;
+      display: grid;
+      place-items: center;
+      border-radius: 9px;
+      color: #fff;
+      background: var(--green);
+      font-size: 12px;
+    }
+    .step span {
+      color: #52645e;
+      font-size: 13px;
+      line-height: 1.55;
+    }
+    .step strong { display: block; color: var(--text); }
+    .guide-actions { display: flex; gap: 10px; margin-top: 22px; }
+    .guide button {
+      border: 0;
+      border-radius: 12px;
+      padding: 11px 15px;
+      cursor: pointer;
+      color: var(--green);
+      background: rgba(255,255,255,.72);
+      font-size: 13px;
+      font-weight: 650;
+    }
+    .phone {
+      width: 390px;
+      height: 820px;
+      position: relative;
+      overflow: hidden;
+      border: 9px solid #17221f;
+      border-radius: 44px;
+      background: var(--page);
+      box-shadow: 0 35px 80px rgba(25, 51, 44, .3);
+    }
+    .phone::before {
+      content: "";
+      position: absolute;
+      z-index: 20;
+      top: 10px;
+      left: 50%;
+      width: 118px;
+      height: 26px;
+      transform: translateX(-50%);
+      border-radius: 15px;
+      background: #17221f;
+    }
+    .statusbar {
+      height: 46px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 13px 22px 0;
+      background: #f7faf9;
+      font-size: 12px;
+      font-weight: 650;
+    }
+    .nav-title {
+      height: 46px;
+      display: grid;
+      place-items: center;
+      border-bottom: 1px solid #eef2f0;
+      background: #f7faf9;
+      font-size: 16px;
+      font-weight: 700;
+    }
+    .screen {
+      height: calc(100% - 158px);
+      overflow-y: auto;
+      padding: 16px 16px 30px;
+      scrollbar-width: none;
+    }
+    .screen::-webkit-scrollbar { display: none; }
+    .page { display: none; }
+    .page.active { display: block; animation: enter .18s ease; }
+    @keyframes enter { from { opacity: .45; transform: translateY(3px); } }
+    /* ===== 登录 / 注册 ===== */
+    .auth-screen {
+      position: absolute;
+      z-index: 30;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      background: var(--page);
+    }
+    .auth-screen.hidden { display: none; }
+    .auth-brand {
+      padding: 34px 26px 20px;
+      background: linear-gradient(160deg, var(--green), var(--green-2));
+      color: #fff;
+    }
+    .auth-brand .logo {
+      width: 54px; height: 54px;
+      display: grid; place-items: center;
+      border-radius: 16px;
+      background: rgba(255,255,255,.18);
+      font-size: 26px; font-weight: 800;
+    }
+    .auth-brand h1 { margin: 16px 0 4px; font-size: 24px; }
+    .auth-brand p { margin: 0; opacity: .78; font-size: 12px; }
+    .auth-body { flex: 1; overflow-y: auto; padding: 22px 26px 30px; }
+    .auth-tabs {
+      display: flex;
+      gap: 6px;
+      margin-bottom: 20px;
+      padding: 4px;
+      border-radius: 12px;
+      background: #e8eeec;
+    }
+    .auth-tabs button {
+      flex: 1;
+      border: 0;
+      padding: 9px;
+      border-radius: 9px;
+      color: #64726d;
+      background: transparent;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 650;
+    }
+    .auth-tabs button.on { color: var(--green); background: #fff; box-shadow: 0 2px 8px rgba(36,73,63,.08); }
+    .field { margin-bottom: 14px; }
+    .field label { display: block; margin: 0 0 6px 2px; color: #4c5b56; font-size: 12px; font-weight: 650; }
+    .field input {
+      width: 100%;
+      border: 1px solid #dde5e2;
+      border-radius: 12px;
+      padding: 12px 14px;
+      background: #fff;
+      color: var(--text);
+      font-size: 14px;
+      outline: none;
+    }
+    .field input:focus { border-color: var(--green-2); }
+    .field input::placeholder { color: #b0bab6; }
+    .pwd-wrap { position: relative; }
+    .pwd-wrap input { padding-right: 46px; }
+    .pwd-eye {
+      position: absolute; top: 50%; right: 10px;
+      transform: translateY(-50%);
+      border: 0; background: transparent; cursor: pointer;
+      color: #93a09b; font-size: 13px;
+    }
+    .field-hint { display: flex; justify-content: space-between; margin-top: 6px; font-size: 11px; }
+    .field-hint span { color: var(--red); }
+    .field-hint a { color: var(--green); cursor: pointer; }
+    .auth-btn {
+      width: 100%;
+      border: 0;
+      border-radius: 13px;
+      padding: 14px;
+      color: #fff;
+      background: var(--green);
+      cursor: pointer;
+      font-size: 15px;
+      font-weight: 750;
+    }
+    .auth-btn:disabled { background: #b9c6c1; cursor: not-allowed; }
+    .auth-btn.ghost { color: var(--green); background: var(--green-soft); margin-top: 10px; }
+    .agree {
+      display: flex; align-items: center; gap: 8px;
+      margin: 14px 0;
+      color: #74817c;
+      font-size: 11px;
+    }
+    .agree input { accent-color: var(--green); }
+    .agree a { color: var(--green); }
+    .divider {
+      display: flex; align-items: center; gap: 12px;
+      margin: 20px 0 14px;
+      color: #a5afab;
+      font-size: 11px;
+    }
+    .divider::before, .divider::after { content: ""; flex: 1; height: 1px; background: #e6ecea; }
+    .wx-btn {
+      width: 100%;
+      border: 1px solid #dde5e2;
+      border-radius: 13px;
+      padding: 13px;
+      color: #2f6b52;
+      background: #fff;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 700;
+    }
+    .tabbar {
+      position: absolute;
+      z-index: 15;
+      left: 0; right: 0; bottom: 0;
+      height: 66px;
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      border-top: 1px solid #e7ecea;
+      background: rgba(255,255,255,.96);
+      backdrop-filter: blur(16px);
+    }
+    .tab {
+      border: 0;
+      color: #8a9692;
+      background: transparent;
+      cursor: pointer;
+      font-size: 10px;
+    }
+    .tab i {
+      width: 26px;
+      height: 26px;
+      margin: 0 auto 3px;
+      display: grid;
+      place-items: center;
+      border-radius: 9px;
+      background: #eef2f0;
+      font-style: normal;
+      font-size: 12px;
+      font-weight: 750;
+    }
+    .tab.active { color: var(--green); font-weight: 700; }
+    .tab.active i { background: var(--green-soft); }
+    .hero {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin: 2px 2px 15px;
+    }
+    .hello { font-size: 20px; font-weight: 800; }
+    .sub { margin-top: 4px; color: var(--muted); font-size: 12px; }
+    .avatar {
+      width: 42px; height: 42px;
+      display: grid; place-items: center;
+      border-radius: 50%;
+      color: var(--green);
+      background: #dff1eb;
+      font-weight: 800;
+    }
+    .elder-card {
+      padding: 19px;
+      border-radius: 22px;
+      color: #fff;
+      background: linear-gradient(135deg, var(--green), var(--green-2));
+      box-shadow: 0 14px 30px rgba(22,122,103,.22);
+    }
+    .elder-head { display: flex; justify-content: space-between; }
+    .elder-name { font-size: 17px; font-weight: 800; }
+    .elder-name small { font-weight: 400; opacity: .76; }
+    .conditions { margin-top: 4px; font-size: 11px; opacity: .76; }
+    .online {
+      height: fit-content;
+      padding: 5px 8px;
+      border-radius: 12px;
+      background: rgba(255,255,255,.16);
+      font-size: 10px;
+    }
+    .online::before {
+      content: "";
+      display: inline-block;
+      width: 6px; height: 6px;
+      margin-right: 5px;
+      border-radius: 50%;
+      background: #92efb2;
+    }
+    .progress-summary {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      margin-top: 22px;
+    }
+    .progress-summary label { display: block; opacity: .74; font-size: 11px; }
+    .progress-summary strong { display: block; margin-top: 3px; font-size: 31px; }
+    .rate {
+      width: 62px; height: 62px;
+      display: grid; place-items: center;
+      border: 5px solid rgba(255,255,255,.26);
+      border-top-color: #fff;
+      border-radius: 50%;
+      font-size: 13px;
+      font-weight: 750;
+    }
+    .bar { height: 5px; margin-top: 14px; overflow: hidden; border-radius: 4px; background: rgba(255,255,255,.18); }
+    .bar span { display: block; height: 100%; border-radius: 4px; background: #fff; transition: width .25s; }
+    .alert-banner {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 13px;
+      padding: 12px;
+      border: 1px solid #f1c7bf;
+      border-radius: 16px;
+      background: #fff6f3;
+      cursor: pointer;
+    }
+    .alert-symbol {
+      width: 28px; height: 28px;
+      flex: 0 0 28px;
+      display: grid; place-items: center;
+      border-radius: 50%;
+      color: #fff;
+      background: var(--red);
+      font-weight: 800;
+    }
+    .alert-copy { min-width: 0; flex: 1; }
+    .alert-copy strong { display: block; color: #873e31; font-size: 12px; }
+    .alert-copy span { display: block; margin-top: 3px; overflow: hidden; color: #aa6458; font-size: 10px; white-space: nowrap; text-overflow: ellipsis; }
+    .home-measure { margin-top: 9px; padding: 11px 12px; border-left: 3px solid var(--red); border-radius: 12px; background: #fff; box-shadow: 0 6px 18px rgba(36,73,63,.05); }
+    .home-measure strong { display: block; color: #873e31; font-size: 11px; }
+    .home-measure span, .home-measure small { display: block; margin-top: 4px; color: #66756f; font-size: 10px; line-height: 1.55; }
+    .home-measure small { color: #a36d12; }
+    .section-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin: 20px 2px 10px;
+    }
+    .section-head strong { font-size: 16px; }
+    .section-head button {
+      border: 0;
+      padding: 0;
+      color: var(--green);
+      background: transparent;
+      cursor: pointer;
+      font-size: 11px;
+    }
+    .card {
+      padding: 14px;
+      border-radius: 18px;
+      background: var(--card);
+      box-shadow: 0 7px 22px rgba(36,73,63,.06);
+    }
+    .task {
+      display: grid;
+      grid-template-columns: 52px 15px 1fr auto;
+      align-items: start;
+      gap: 8px;
+      padding: 10px 0;
+      border-bottom: 1px solid #edf1f0;
+    }
+    .task:last-child { border-bottom: 0; }
+    .task-time { font-size: 14px; font-weight: 750; }
+    .task-time small { display: block; margin-top: 3px; color: var(--muted); font-size: 9px; font-weight: 400; }
+    .task-dot { width: 10px; height: 10px; margin-top: 4px; border-radius: 50%; background: #97a39f; }
+    .task-main strong { display: block; font-size: 12px; line-height: 1.45; }
+    .task-main small { display: block; margin-top: 3px; color: var(--muted); font-size: 9px; }
+    .tag {
+      padding: 5px 8px;
+      border-radius: 12px;
+      font-size: 9px;
+      font-weight: 750;
+      white-space: nowrap;
+    }
+    .completed { color: #15745f; background: #e5f5ef; }
+    .reminding { color: #916009; background: var(--amber-soft); }
+    .pending { color: #53655f; background: #edf2f0; }
+    .overdue { color: #aa493a; background: var(--red-soft); }
+    .none { color: #909b97; background: #f1f3f2; }
+    .task-dot.completed { background: #32a383; }
+    .task-dot.reminding { background: #dfa92f; }
+    .task-dot.pending { background: #97a39f; }
+    .task-dot.overdue { background: #d46b59; }
+    .quick-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; }
+    .quick {
+      border: 0;
+      padding: 13px;
+      border-radius: 15px;
+      text-align: left;
+      background: #fff;
+      box-shadow: 0 6px 18px rgba(36,73,63,.05);
+      cursor: pointer;
+    }
+    .quick b {
+      width: 30px; height: 30px;
+      display: grid; place-items: center;
+      border-radius: 10px;
+      color: var(--green);
+      background: var(--green-soft);
+      font-size: 11px;
+    }
+    .quick strong { display: block; margin-top: 9px; font-size: 12px; }
+    .quick span { display: block; margin-top: 2px; color: var(--muted); font-size: 9px; }
+    .note {
+      margin-top: 14px;
+      padding: 12px;
+      border-radius: 13px;
+      color: #66756f;
+      background: #eaf0ee;
+      font-size: 10px;
+      line-height: 1.55;
+    }
+    .device-strip {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 15px;
+      border-radius: 18px;
+      color: #fff;
+      background: linear-gradient(135deg, var(--green), var(--green-2));
+    }
+    .device-icon {
+      width: 38px; height: 38px;
+      display: grid; place-items: center;
+      border-radius: 12px;
+      background: rgba(255,255,255,.16);
+      font-weight: 800;
+    }
+    .device-text { flex: 1; }
+    .device-text strong { display: block; font-size: 13px; }
+    .device-text small { opacity: .74; font-size: 9px; }
+    .intro { margin: 17px 2px 11px; }
+    .intro strong { font-size: 16px; }
+    .intro p { margin: 5px 0 0; color: var(--muted); font-size: 10px; line-height: 1.55; }
+    .pillbox-scroll { overflow-x: auto; padding-bottom: 6px; scrollbar-width: none; }
+    .pill-grid {
+      width: 580px;
+      display: grid;
+      grid-template-columns: 47px repeat(7, 67px);
+      gap: 6px;
+      padding: 10px;
+      border-radius: 17px;
+      background: #fff;
+    }
+    .day, .slot, .cell {
+      min-height: 45px;
+      display: grid;
+      place-items: center;
+      border-radius: 10px;
+      font-size: 9px;
+    }
+    .day.today { color: var(--green); background: var(--green-soft); font-weight: 750; }
+    .slot { color: #52635d; background: #f1f4f3; font-weight: 750; }
+    .cell {
+      min-height: 68px;
+      border: 1px solid transparent;
+      cursor: pointer;
+      font-weight: 750;
+    }
+    .cell.today { border-color: #5ca995; }
+    .cell small { display: block; margin-top: -12px; font-size: 8px; font-weight: 400; opacity: .7; }
+    .legend { display: flex; flex-wrap: wrap; gap: 8px 13px; margin-top: 10px; padding: 11px; }
+    .legend span { color: #66756f; font-size: 9px; }
+    .legend i { display: inline-block; width: 8px; height: 8px; margin-right: 4px; border-radius: 50%; }
+    .action {
+      width: 100%;
+      margin-top: 13px;
+      border: 0;
+      border-radius: 14px;
+      padding: 13px;
+      cursor: pointer;
+      color: #fff;
+      background: var(--green);
+      font-size: 12px;
+      font-weight: 750;
+    }
+    .action.danger { color: #a8493a; background: var(--red-soft); }
+    .plan-summary, .alert-overview, .profile-card {
+      padding: 18px;
+      border-radius: 19px;
+      color: #fff;
+      background: linear-gradient(135deg, #276b85, #4399a2);
+    }
+    .summary-flex { display: flex; align-items: center; justify-content: space-between; }
+    .summary-flex strong { font-size: 16px; }
+    .summary-flex p { margin: 4px 0 0; opacity: .76; font-size: 10px; }
+    .summary-flex b { font-size: 30px; }
+    .plan-card, .alert-card, .info-card {
+      margin-bottom: 10px;
+      padding: 14px;
+      border-radius: 16px;
+      background: #fff;
+      box-shadow: 0 6px 18px rgba(36,73,63,.05);
+    }
+    .plan-top { display: flex; justify-content: space-between; }
+    .plan-top strong { font-size: 14px; }
+    .plan-top small { display: block; margin-top: 3px; color: var(--muted); font-size: 9px; }
+    .switch {
+      width: 38px; height: 22px;
+      position: relative;
+      border: 0;
+      border-radius: 12px;
+      background: #c9d0cd;
+      cursor: pointer;
+    }
+    .switch::after {
+      content: "";
+      position: absolute;
+      top: 3px; left: 3px;
+      width: 16px; height: 16px;
+      border-radius: 50%;
+      background: #fff;
+      transition: .2s;
+    }
+    .switch.on { background: var(--green); }
+    .switch.on::after { left: 19px; }
+    .plan-bottom {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 11px;
+      padding-top: 11px;
+      border-top: 1px solid #edf1f0;
+    }
+    .timebox { padding: 8px 10px; border-radius: 10px; color: var(--green); background: var(--green-soft); font-size: 13px; font-weight: 750; }
+    .schedule { color: #52635d; font-size: 10px; }
+    .alert-overview { display: flex; gap: 12px; align-items: center; background: linear-gradient(135deg, #b95746, #d37c69); }
+    .alert-overview b {
+      width: 38px; height: 38px; display: grid; place-items: center;
+      border-radius: 50%; background: rgba(255,255,255,.17); font-size: 20px;
+    }
+    .alert-card { display: flex; gap: 10px; cursor: pointer; }
+    .alert-card.unread { border: 1px solid #edc7c0; }
+    .level {
+      width: 32px; height: 32px; flex: 0 0 32px;
+      display: grid; place-items: center;
+      border-radius: 10px; color: var(--red); background: var(--red-soft); font-weight: 800;
+    }
+    .alert-card .main { min-width: 0; flex: 1; }
+    .alert-card strong { font-size: 12px; }
+    .alert-card p { margin: 5px 0; color: #6f7e79; font-size: 10px; line-height: 1.45; }
+    .alert-card small { color: #99a39f; font-size: 9px; }
+    .profile-card { text-align: center; background: linear-gradient(135deg, var(--green), var(--green-2)); }
+    .profile-avatar {
+      width: 58px; height: 58px; margin: auto; display: grid; place-items: center;
+      border: 3px solid rgba(255,255,255,.3); border-radius: 50%; background: rgba(255,255,255,.15); font-size: 20px; font-weight: 800;
+    }
+    .profile-card h2 { margin: 9px 0 3px; font-size: 19px; }
+    .profile-card p { margin: 0; opacity: .76; font-size: 10px; }
+    .chips { display: flex; justify-content: center; gap: 6px; margin-top: 10px; }
+    .chips span { padding: 4px 8px; border-radius: 10px; background: rgba(255,255,255,.16); font-size: 9px; }
+    .info-row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #edf1f0; font-size: 11px; }
+    .info-row:last-child { border-bottom: 0; }
+    .info-row span:first-child { color: var(--muted); }
+    .toast {
+      position: absolute;
+      z-index: 50;
+      left: 50%; top: 110px;
+      padding: 10px 15px;
+      border-radius: 12px;
+      color: #fff;
+      background: rgba(25,37,33,.9);
+      transform: translate(-50%, -15px);
+      opacity: 0;
+      pointer-events: none;
+      transition: .22s;
+      font-size: 11px;
+      white-space: nowrap;
+    }
+    .toast.show { opacity: 1; transform: translate(-50%, 0); }
+    .modal-mask {
+      position: absolute; z-index: 40; inset: 0;
+      display: none; align-items: center; justify-content: center;
+      padding: 25px;
+      background: rgba(17,29,25,.54);
+    }
+    .modal-mask.show { display: flex; }
+    .modal {
+      width: 100%;
+      overflow: hidden;
+      border-radius: 18px;
+      background: #fff;
+      box-shadow: var(--shadow);
+    }
+    .modal-body { padding: 19px; }
+    .modal h3 { margin: 0 0 8px; font-size: 16px; }
+    .modal p { margin: 0; color: #66756f; font-size: 11px; line-height: 1.65; white-space: pre-line; }
+    .modal-actions { display: grid; grid-template-columns: 1fr 1fr; border-top: 1px solid #e9eeec; }
+    .modal-actions button { border: 0; padding: 13px; background: #fff; cursor: pointer; color: #67746f; font-size: 11px; }
+    .modal-actions button + button { border-left: 1px solid #e9eeec; color: var(--green); font-weight: 750; }
+    @media (max-width: 850px) {
+      .workspace { grid-template-columns: 1fr; gap: 26px; padding: 28px 12px; }
+      .guide { margin: auto; }
+      .phone { margin: auto; width: min(390px, calc(100vw - 24px)); }
+    }
+  </style>
+</head>
+<body>
+  <main class="workspace">
+    <section class="guide">
+      <span class="eyebrow">WECHAT MINI PROGRAM PROTOTYPE</span>
+      <h1>安心药伴<br>家属端 Demo</h1>
+      <p>用模拟数据演示家属查看老人用药状态、21 格药盒、异常提醒和历史记录的核心流程。右侧手机可直接点击。</p>
+      <div class="demo-steps">
+        <div class="step"><b>1</b><span><strong>查看今日任务</strong>首页展示老人、设备与当前用药进度。</span></div>
+        <div class="step"><b>2</b><span><strong>查看异常状态</strong>首页红色提醒显示未检测到开盒的任务。</span></div>
+        <div class="step"><b>3</b><span><strong>查看处理措施</strong>先联系老人确认，必要时联系社区协助。</span></div>
+        <div class="step"><b>4</b><span><strong>检查记录</strong>历史记录只记录药格开盒等系统事件。</span></div>
+      </div>
+      <div class="guide-actions">
+        <button onclick="resetDemo()">重置演示数据</button>
+        <button onclick="switchPage('pillbox')">直接查看 21 格药盒</button>
+      </div>
+    </section>
+
+    <section class="phone">
+      <div class="auth-screen" id="auth-screen">
+        <div class="auth-brand">
+          <div class="logo">药</div>
+          <h1>安心药伴</h1>
+          <p>守护每一位独居老人按时用药</p>
+        </div>
+        <div class="auth-body">
+          <div class="auth-tabs">
+            <button id="tab-login" class="on" onclick="authTab('login')">登录</button>
+            <button id="tab-register" onclick="authTab('register')">注册</button>
+          </div>
+
+          <form id="form-login" onsubmit="return false;">
+            <div class="field"><label>手机号</label><input id="login-phone" type="tel" maxlength="11" placeholder="请输入 11 位手机号" oninput="authChanged()"></div>
+            <div class="field"><label>密码</label><div class="pwd-wrap"><input id="login-pwd" type="password" placeholder="请输入密码" oninput="authChanged()"><button type="button" class="pwd-eye" onclick="togglePwd('login-pwd',this)">显示</button></div><div class="field-hint"><span id="login-error"></span><a onclick="toast('请联系家属或社区联络员重置密码（Demo）')">忘记密码？</a></div></div>
+            <div class="agree"><input type="checkbox" id="login-agree" onchange="authChanged()">我已阅读并同意<a onclick="showAgreement()">《用户协议》</a>与<a onclick="showAgreement()">《隐私政策》</a></div>
+            <button class="auth-btn" id="login-btn" disabled onclick="doLogin()">登录</button>
+          </form>
+
+          <form id="form-register" style="display:none" onsubmit="return false;">
+            <div class="field"><label>手机号</label><input id="reg-phone" type="tel" maxlength="11" placeholder="请输入 11 位手机号" oninput="authChanged()"></div>
+            <div class="field"><label>设置密码</label><div class="pwd-wrap"><input id="reg-pwd" type="password" placeholder="6-20 位，含字母和数字" oninput="authChanged()"><button type="button" class="pwd-eye" onclick="togglePwd('reg-pwd',this)">显示</button></div></div>
+            <div class="field"><label>确认密码</label><input id="reg-pwd2" type="password" placeholder="请再次输入密码" oninput="authChanged()"></div>
+            <div class="field-hint"><span id="reg-error"></span></div>
+            <div class="agree"><input type="checkbox" id="reg-agree" onchange="authChanged()">我已阅读并同意<a onclick="showAgreement()">《用户协议》</a>与<a onclick="showAgreement()">《隐私政策》</a></div>
+            <button class="auth-btn" id="reg-btn" disabled onclick="doRegister()">注册并登录</button>
+          </form>
+
+          <div class="divider">其他登录方式</div>
+          <button class="wx-btn" onclick="doWxLogin()">微信一键登录</button>
+        </div>
+      </div>
+
+      <div class="statusbar"><span id="clock">09:41</span><span>●●●  Wi‑Fi  🔋</span></div>
+      <div class="nav-title" id="nav-title">安心药伴</div>
+      <div class="screen">
+        <section class="page active" id="page-home">
+          <div class="hero"><div><div class="hello" id="home-hello">早上好，李女士</div><div class="sub">今天也一起守护父亲按时用药</div></div><div class="avatar">李</div></div>
+          <div class="elder-card">
+            <div class="elder-head"><div><div class="elder-name">李建国 <small>72岁 · 父亲</small></div><div class="conditions">高血压 · 2型糖尿病</div></div><span class="online">药盒在线</span></div>
+            <div class="progress-summary"><div><label>今日服药进度</label><strong id="home-progress">1/3</strong></div><div class="rate" id="home-rate">33%</div></div>
+            <div class="bar"><span id="home-bar" style="width:33%"></span></div>
+          </div>
+          <div class="alert-banner" onclick="switchPage('alerts')"><div class="alert-symbol">!</div><div class="alert-copy"><strong id="home-alert-title">晚间用药可能漏服</strong><span id="home-alert-detail">药格在宽限时间内未检测到开盒事件</span></div><span>›</span></div>
+          <div class="home-measure"><strong>处理措施</strong><span>先联系老人确认实际情况；多次联系未果，可联系社区联络员协助上门查看。</span><small>开盒记录不能证明老人已经服药。</small></div>
+          <div class="section-head"><strong>今日用药</strong><button onclick="switchPage('pillbox')">查看本周药盒 ›</button></div>
+          <div class="card" id="today-tasks"></div>
+          <div class="section-head"><strong>快捷操作</strong></div>
+          <div class="quick-grid">
+            <button class="quick" onclick="showHistory()"><b>记</b><strong>历史记录</strong><span>查看开盒记录</span></button>
+            <button class="quick" onclick="switchPage('alerts')"><b>醒</b><strong>异常提醒</strong><span id="quick-unread">1 条未读</span></button>
+          </div>
+          <div class="note">“已完成”表示系统检测到对应药格的开盒事件，不代表医学意义上的确认服药。</div>
+        </section>
+
+        <section class="page" id="page-pillbox">
+          <div class="device-strip"><div class="device-icon">药</div><div class="device-text"><strong>客厅智能药盒</strong><small>MG-2026-001 · 电量 86%</small></div><span class="online">在线</span></div>
+          <div class="intro"><strong>7 天 × 3 时段</strong><p>横向滑动查看完整 21 格；点击药格可查看详情并模拟开盒。</p></div>
+          <div class="pillbox-scroll"><div class="pill-grid" id="pill-grid"></div></div>
+          <div class="card legend"><span><i style="background:#32a383"></i>已完成</span><span><i style="background:#dfa92f"></i>提醒中</span><span><i style="background:#97a39f"></i>待服药</span><span><i style="background:#d46b59"></i>已逾期</span><span><i style="background:#d4d9d7"></i>无需服药</span></div>
+          <button class="action danger" onclick="simulateOverdue()">模拟一次“超时未开盒”</button>
+          <div class="note">Demo 中的药格事件为模拟数据。正式系统将由 ESP32 上传真实开盒事件。</div>
+        </section>
+
+        <section class="page" id="page-plans">
+          <div class="plan-summary summary-flex"><div><strong>本周用药计划</strong><p>由家属维护，药盒将按计划提醒老人</p></div><b id="plan-count">3</b></div>
+          <div class="section-head"><strong>计划列表</strong><button>一位老人</button></div>
+          <div id="plan-list"></div>
+          <button class="action" onclick="addPlan()">＋ 新增演示计划</button>
+          <div class="note">正式版本中，“新增计划”将包含药物、剂量、星期、早中晚时段和提醒时间等字段。</div>
+        </section>
+
+        <section class="page" id="page-alerts">
+          <div class="alert-overview"><b>!</b><div><strong id="alert-summary">1 条提醒待查看</strong><p style="margin:4px 0 0;opacity:.76;font-size:10px">超时未开盒时，系统会生成家属异常通知</p></div></div>
+          <div class="section-head"><strong>消息记录</strong><button onclick="markAllRead()">全部已读</button></div>
+          <div id="alert-list"></div>
+          <button class="action danger" onclick="simulateOverdue()">模拟生成一条漏服风险提醒</button>
+          <div class="note"><b>处理措施：</b>先联系老人确认实际情况；检查药盒是否断电或离线；多次联系未果，可联系社区联络员协助上门查看；如老人身体不适，请联系专业医疗人员。社区联系人信息需由项目实际配置，当前 Demo 未填写真实联系方式。</div>
+        </section>
+
+        <section class="page" id="page-profile">
+          <div class="profile-card"><div class="profile-avatar">李</div><h2>李建国</h2><p>72岁 · 父亲 · 青岛市市北区</p><div class="chips"><span>高血压</span><span>2型糖尿病</span></div></div>
+          <div class="section-head"><strong>老人档案</strong></div>
+          <div class="info-card"><div class="info-row"><span>姓名</span><span>李建国</span></div><div class="info-row"><span>年龄</span><span>72 岁</span></div><div class="info-row"><span>居住地址</span><span>青岛市市北区</span></div><div class="info-row"><span>紧急联系人</span><span>李女士 138****2608</span></div></div>
+          <div class="section-head"><strong>绑定设备</strong></div>
+          <div class="info-card"><div class="info-row"><span>设备</span><span>客厅智能药盒</span></div><div class="info-row"><span>设备编号</span><span>MG-2026-001</span></div><div class="info-row"><span>状态</span><span style="color:var(--green)">在线 · 电量 86%</span></div></div>
+          <button class="action" style="background:var(--green-soft);color:var(--green)" onclick="showHistory()">查看服药历史记录</button>
+          <button class="action danger" onclick="confirmLogout()">退出登录</button>
+          <button class="action" style="background:#edf1ef;color:#52635d" onclick="resetDemo()">重置全部演示数据</button>
+        </section>
+      </div>
+
+      <nav class="tabbar">
+        <button class="tab active" data-page="home" onclick="switchPage('home')"><i>首</i>首页</button>
+        <button class="tab" data-page="pillbox" onclick="switchPage('pillbox')"><i>盒</i>药盒</button>
+        <button class="tab" data-page="plans" onclick="switchPage('plans')"><i>计</i>计划</button>
+        <button class="tab" data-page="alerts" onclick="switchPage('alerts')"><i>醒</i>提醒</button>
+        <button class="tab" data-page="profile" onclick="switchPage('profile')"><i>我</i>我的</button>
+      </nav>
+
+      <div class="toast" id="toast"></div>
+      <div class="modal-mask" id="modal-mask">
+        <div class="modal"><div class="modal-body"><h3 id="modal-title"></h3><p id="modal-text"></p></div><div class="modal-actions"><button onclick="closeModal()">关闭</button><button id="modal-confirm">确定</button></div></div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const days = ['周一','周二','周三','周四','周五','周六','周日'];
+    const slots = [
+      { key:'morning', name:'早', full:'早餐后', time:'08:00-08:30' },
+      { key:'noon', name:'中', full:'午餐后', time:'12:00-12:30' },
+      { key:'evening', name:'晚', full:'晚餐后', time:'19:00-19:30' }
+    ];
+    const meta = {
+      NO_MEDICATION:{label:'无需服药',short:'无',css:'none'},
+      PENDING:{label:'待服药',short:'待',css:'pending'},
+      REMINDING:{label:'提醒中',short:'提醒',css:'reminding'},
+      COMPLETED:{label:'已完成',short:'完成',css:'completed'},
+      OVERDUE:{label:'已逾期',short:'逾期',css:'overdue'}
+    };
+    const todayIndex = (() => { const d=new Date().getDay(); return d===0?6:d-1; })();
+    function medicines(slot, day) {
+      if(slot==='morning') return ['氨氯地平片 1片','阿司匹林肠溶片 1片'];
+      if(slot==='noon') return [0,2,4].includes(day) ? ['二甲双胍片 1片'] : [];
+      return ['阿托伐他汀钙片 1片'];
+    }
+    function initialState(){
+      const tasks=[];
+      slots.forEach(slot=>days.forEach((day,dayIndex)=>{
+        const meds=medicines(slot.key,dayIndex);
+        let status=meds.length?'PENDING':'NO_MEDICATION';
+        if(meds.length&&dayIndex<todayIndex) status='COMPLETED';
+        if(meds.length&&dayIndex===todayIndex&&slot.key==='morning') status='COMPLETED';
+        if(meds.length&&dayIndex===todayIndex&&slot.key==='noon') status='REMINDING';
+        tasks.push({id:`${dayIndex}-${slot.key}`,dayIndex,day,slotKey:slot.key,slotName:slot.name,slotFull:slot.full,time:slot.time,medicines:meds,status,completedAt:status==='COMPLETED'?'08:16':''});
+      }));
+      const prev=todayIndex===0?6:todayIndex-1;
+      const overdue=tasks.find(t=>t.dayIndex===prev&&t.slotKey==='evening');
+      if(overdue){overdue.status='OVERDUE';overdue.completedAt='';}
+      return {
+        tasks,
+        plans:[
+          {id:'p1',medicine:'氨氯地平片',dose:'1片 · 降压药',time:'08:00',schedule:'每天 · 早餐后',enabled:true},
+          {id:'p2',medicine:'二甲双胍片',dose:'1片 · 随餐服用',time:'12:00',schedule:'周一、周三、周五 · 午餐后',enabled:true},
+          {id:'p3',medicine:'阿托伐他汀钙片',dose:'1片 · 晚间服用',time:'19:00',schedule:'每天 · 晚餐后',enabled:true}
+        ],
+        alerts:[
+          {id:'a1',title:'晚间用药可能漏服',detail:`${days[prev]} 19:00 的药格在宽限时间内未检测到开盒事件`,time:'昨天 19:46',read:false,taskId:overdue.id},
+          {id:'a2',title:'药盒已恢复在线',detail:'设备 MG-2026-001 已重新连接家庭 Wi-Fi',time:'昨天 09:12',read:true,taskId:''}
+        ],
+        history:[
+          {date:'今天',slot:'早餐后',medicine:'氨氯地平片、阿司匹林肠溶片',status:'COMPLETED',event:'08:16 检测到开盒'},
+          {date:'昨天',slot:'午餐后',medicine:'二甲双胍片',status:'COMPLETED',event:'12:08 检测到开盒'},
+          {date:'昨天',slot:'晚餐后',medicine:'阿托伐他汀钙片',status:'OVERDUE',event:'未检测到开盒事件'}
+        ]
+      };
+    }
+    let state = initialState();
+    const titles={home:'安心药伴',pillbox:'本周药盒',plans:'用药计划',alerts:'异常提醒',profile:'老人档案'};
+    function switchPage(page){
+      document.querySelectorAll('.page').forEach(el=>el.classList.toggle('active',el.id===`page-${page}`));
+      document.querySelectorAll('.tab').forEach(el=>el.classList.toggle('active',el.dataset.page===page));
+      document.getElementById('nav-title').textContent=titles[page];
+      document.querySelector('.screen').scrollTop=0;
+      render();
+    }
+    function render(){
+      renderHome(); renderPillbox(); renderPlans(); renderAlerts();
+    }
+    function renderHome(){
+      const today=state.tasks.filter(t=>t.dayIndex===todayIndex);
+      const active=today.filter(t=>t.status!=='NO_MEDICATION');
+      const done=active.filter(t=>t.status==='COMPLETED').length;
+      const rate=active.length?Math.round(done/active.length*100):100;
+      document.getElementById('home-progress').textContent=`${done}/${active.length}`;
+      document.getElementById('home-rate').textContent=`${rate}%`;
+      document.getElementById('home-bar').style.width=`${rate}%`;
+      document.getElementById('today-tasks').innerHTML=today.map(t=>`
+        <div class="task">
+          <div class="task-time">${t.time.slice(0,5)}<small>${t.slotFull}</small></div>
+          <span class="task-dot ${meta[t.status].css}"></span>
+          <div class="task-main"><strong>${t.medicines.length?t.medicines.join(' · '):'本时段无需服药'}</strong><small>${t.completedAt?t.completedAt+' 检测到开盒事件':t.time}</small></div>
+          <span class="tag ${meta[t.status].css}">${meta[t.status].label}</span>
+        </div>`).join('');
+      const unread=state.alerts.filter(a=>!a.read);
+      const latest=unread[0]||state.alerts[0];
+      document.getElementById('home-alert-title').textContent=latest?latest.title:'当前没有异常提醒';
+      document.getElementById('home-alert-detail').textContent=latest?latest.detail:'今日用药状态正常';
+      document.getElementById('quick-unread').textContent=`${unread.length} 条未读`;
+    }
+    function renderPillbox(){
+      const grid=document.getElementById('pill-grid');
+      let html='<div class="day">时段</div>'+days.map((d,i)=>`<div class="day ${i===todayIndex?'today':''}">${d}</div>`).join('');
+      slots.forEach(slot=>{
+        html+=`<div class="slot">${slot.name}<small>${slot.time.slice(0,5)}</small></div>`;
+        days.forEach((day,di)=>{
+          const t=state.tasks.find(x=>x.dayIndex===di&&x.slotKey===slot.key);
+          html+=`<div class="cell ${meta[t.status].css} ${di===todayIndex?'today':''}" onclick="openTask('${t.id}')">${meta[t.status].short}<small>${t.medicines.length}种</small></div>`;
+        });
+      });
+      grid.innerHTML=html;
+    }
+    function renderPlans(){
+      document.getElementById('plan-count').textContent=state.plans.length;
+      document.getElementById('plan-list').innerHTML=state.plans.map(p=>`
+        <div class="plan-card" style="${p.enabled?'':'opacity:.55'}">
+          <div class="plan-top"><div><strong>${p.medicine}</strong><small>${p.dose}</small></div><button class="switch ${p.enabled?'on':''}" onclick="togglePlan('${p.id}')"></button></div>
+          <div class="plan-bottom"><span class="timebox">${p.time}</span><span class="schedule">${p.schedule}<br>${p.enabled?'药盒将正常提醒':'该计划已暂停'}</span></div>
+        </div>`).join('');
+    }
+    function renderAlerts(){
+      const unread=state.alerts.filter(a=>!a.read).length;
+      document.getElementById('alert-summary').textContent=unread?`${unread} 条提醒待查看`:'当前没有未读提醒';
+      document.getElementById('alert-list').innerHTML=state.alerts.map(a=>`
+        <div class="alert-card ${a.read?'':'unread'}" onclick="openAlert('${a.id}')">
+          <div class="level">${a.title.includes('漏服')?'!':'i'}</div>
+          <div class="main"><strong>${a.title}</strong><p>${a.detail}</p><small>${a.time} · ${a.read?'已读':'未读'}</small></div>
+        </div>`).join('');
+    }
+    function simulateOpen(){
+      const t=state.tasks.find(x=>x.dayIndex===todayIndex&&['REMINDING','PENDING','OVERDUE'].includes(x.status));
+      if(!t){toast('今日任务已完成');return;}
+      completeTask(t.id);
+    }
+    function completeTask(id){
+      const t=state.tasks.find(x=>x.id===id);
+      if(!t||t.status==='NO_MEDICATION'){return;}
+      t.status='COMPLETED'; t.completedAt=new Date().toTimeString().slice(0,5);
+      state.alerts.forEach(a=>{if(a.taskId===id)a.read=true;});
+      state.history.unshift({date:'今天',slot:t.slotFull,medicine:t.medicines.join('、'),status:'COMPLETED',event:`${t.completedAt} 检测到开盒`});
+      render(); closeModal(); toast('已记录开盒事件');
+    }
+    function simulateOverdue(){
+      const t=state.tasks.find(x=>['REMINDING','PENDING'].includes(x.status)&&x.medicines.length);
+      if(!t){toast('没有可模拟的待服药任务');return;}
+      t.status='OVERDUE'; t.completedAt='';
+      const existing=state.alerts.find(a=>a.taskId===t.id);
+      if(existing){existing.read=false;existing.time='刚刚';}
+      else state.alerts.unshift({id:'a'+Date.now(),title:`${t.day}${t.slotFull}可能漏服`,detail:`${t.time} 的药格在宽限时间内未检测到开盒事件，请及时联系老人确认`,time:'刚刚',read:false,taskId:t.id});
+      state.history.unshift({date:'今天',slot:t.slotFull,medicine:t.medicines.join('、'),status:'OVERDUE',event:'未检测到开盒事件'});
+      render(); toast('异常提醒已生成'); switchPage('alerts');
+    }
+    function openTask(id){
+      const t=state.tasks.find(x=>x.id===id);
+      const can=!['NO_MEDICATION','COMPLETED'].includes(t.status);
+      showModal(`${t.day} · ${t.slotFull}`,`${t.time}\n${t.medicines.length?t.medicines.join('\n'):'本时段无需服药'}\n\n当前状态：${meta[t.status].label}`,can?'模拟开盒':'知道了',can?()=>completeTask(id):closeModal);
+    }
+    function openAlert(id){
+      const a=state.alerts.find(x=>x.id===id); a.read=true; render();
+      showModal(a.title,`${a.detail}\n\n提示：请先通过电话或其他方式联系老人确认实际情况。`,'我知道了',closeModal);
+    }
+    function markAllRead(){state.alerts.forEach(a=>a.read=true);render();toast('已全部标记为已读');}
+    function togglePlan(id){const p=state.plans.find(x=>x.id===id);p.enabled=!p.enabled;render();toast(p.enabled?'计划已启用':'计划已暂停');}
+    function addPlan(){
+      if(!state.plans.some(p=>p.medicine==='维生素D滴剂')) state.plans.push({id:'p'+Date.now(),medicine:'维生素D滴剂',dose:'1粒 · 演示新增计划',time:'09:00',schedule:'每周日 · 早餐后',enabled:true});
+      render();toast('演示计划已新增');
+    }
+    function showHistory(){
+      const lines=state.history.slice(0,6).map(h=>`${h.date} · ${h.slot}\n${h.medicine}\n${meta[h.status].label}｜${h.event}`).join('\n\n');
+      showModal('服药历史记录',lines,'知道了',closeModal);
+    }
+    function resetDemo(){state=initialState();render();switchPage('home');toast('演示数据已重置');}
+    function showModal(title,text,confirmText,handler){
+      document.getElementById('modal-title').textContent=title;
+      document.getElementById('modal-text').textContent=text;
+      const btn=document.getElementById('modal-confirm');btn.textContent=confirmText;btn.onclick=handler;
+      document.getElementById('modal-mask').classList.add('show');
+    }
+    function closeModal(){document.getElementById('modal-mask').classList.remove('show');}
+    let toastTimer;
+    function toast(text){const el=document.getElementById('toast');el.textContent=text;el.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.classList.remove('show'),1700);}
+    function updateClock(){document.getElementById('clock').textContent=new Date().toTimeString().slice(0,5);}
+    setInterval(updateClock,10000); updateClock(); render();
+
+    /* ===== 登录 / 注册 ===== */
+    let users = {};                 // 手机号 -> { pwd, name }
+    let locked = {};                // 手机号 -> 剩余重试次数
+    const MAX_RETRY = 3;            // 连续输错 3 次锁定
+    let authMode = 'login';
+
+    function authTab(mode){
+      authMode = mode;
+      document.getElementById('tab-login').classList.toggle('on', mode==='login');
+      document.getElementById('tab-register').classList.toggle('on', mode==='register');
+      document.getElementById('form-login').style.display = mode==='login' ? '' : 'none';
+      document.getElementById('form-register').style.display = mode==='register' ? '' : 'none';
+      setErr(''); authChanged();
+    }
+    function setErr(msg){
+      document.getElementById('login-error').textContent = msg;
+      document.getElementById('reg-error').textContent = msg;
+    }
+    function authChanged(){
+      const login = document.getElementById('login-phone').value.trim();
+      const lp = document.getElementById('login-pwd').value;
+      const la = document.getElementById('login-agree').checked;
+      document.getElementById('login-btn').disabled = !(login.length===11 && lp && la);
+
+      const rp = document.getElementById('reg-phone').value.trim();
+      const rpw = document.getElementById('reg-pwd').value;
+      const rpw2 = document.getElementById('reg-pwd2').value;
+      const ra = document.getElementById('reg-agree').checked;
+      document.getElementById('reg-btn').disabled = !(rp.length===11 && rpw && rpw2 && ra);
+    }
+    function togglePwd(id, btn){
+      const inp = document.getElementById(id);
+      const show = inp.type==='password';
+      inp.type = show ? 'text' : 'password';
+      btn.textContent = show ? '隐藏' : '显示';
+    }
+    function doLogin(){
+      const phone = document.getElementById('login-phone').value.trim();
+      const pwd = document.getElementById('login-pwd').value;
+      if(!/^1\d{10}$/.test(phone)) return setErr('请输入正确的 11 位手机号');
+      if(locked[phone] && locked[phone] <= 0) return setErr('密码错误次数过多，账号已锁定');
+      const u = users[phone];
+      if(!u) return setErr('该手机号尚未注册');
+      if(u.pwd !== pwd){
+        locked[phone] = (locked[phone] ?? MAX_RETRY) - 1;
+        if(locked[phone] <= 0){ setErr('密码错误次数过多，账号已锁定'); return; }
+        return setErr(`密码错误，还可尝试 ${locked[phone]} 次`);
+      }
+      locked[phone] = MAX_RETRY;   // 登录成功重置
+      authSuccess(u.name);
+    }
+    function doRegister(){
+      const phone = document.getElementById('reg-phone').value.trim();
+      const pwd = document.getElementById('reg-pwd').value;
+      const pwd2 = document.getElementById('reg-pwd2').value;
+      if(!/^1\d{10}$/.test(phone)) return setErr('请输入正确的 11 位手机号');
+      if(!/^(?=.*[A-Za-z])(?=.*\d)[\w@#$%^&*]{6,20}$/.test(pwd)) return setErr('密码需 6-20 位，且同时包含字母和数字');
+      if(pwd !== pwd2) return setErr('两次输入的密码不一致');
+      if(users[phone]) return setErr('该手机号已注册，请直接登录');
+      users[phone] = { pwd, name: '李女士' };
+      toast('注册成功，已自动登录');
+      authSuccess('李女士');
+    }
+    function doWxLogin(){
+      if(!document.getElementById('login-agree').checked && !document.getElementById('reg-agree').checked){
+        setErr('请先阅读并同意用户协议与隐私政策'); authTab('login'); return;
+      }
+      toast('微信授权登录成功（Demo）');
+      authSuccess('李女士');
+    }
+    function authSuccess(name){
+      document.getElementById('home-hello').textContent = `早上好，${name}`;
+      document.getElementById('auth-screen').classList.add('hidden');
+      switchPage('home');
+    }
+    function showAgreement(){
+      showModal('用户协议与隐私政策',
+        '欢迎使用安心药伴。\n\n我们仅采集您主动填写的信息，用于绑定老人与用药提醒服务。\n\n本 Demo 为原型演示，不真实存储任何个人信息。',
+        '我知道了', closeModal);
+    }
+    function confirmLogout(){
+      showModal('退出登录', '确定要退出当前账号吗？', '退出登录', doLogout);
+    }
+    function doLogout(){
+      // 清空输入，回登录页
+      document.getElementById('login-phone').value = '';
+      document.getElementById('login-pwd').value = '';
+      document.getElementById('login-agree').checked = false;
+      setErr(''); authChanged();
+      closeModal();
+      document.getElementById('auth-screen').classList.remove('hidden');
+      toast('已退出登录');
+    }
+  </script>
+</body>
+</html>

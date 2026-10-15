@@ -1,0 +1,163 @@
+.profile-card {
+  padding: 40rpx 28rpx;
+  border-radius: 30rpx;
+  color: #ffffff;
+  background: linear-gradient(135deg, #167a67, #3d9784);
+  text-align: center;
+}
+
+.profile-avatar {
+  width: 106rpx;
+  height: 106rpx;
+  margin: 0 auto;
+  border: 6rpx solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.18);
+  font-size: 38rpx;
+  font-weight: 700;
+}
+
+.profile-name {
+  margin-top: 18rpx;
+  font-size: 36rpx;
+  font-weight: 750;
+}
+
+.profile-sub {
+  margin-top: 8rpx;
+  font-size: 23rpx;
+  opacity: 0.78;
+}
+
+.condition-row {
+  display: flex;
+  justify-content: center;
+  gap: 12rpx;
+  margin-top: 20rpx;
+}
+
+.condition {
+  padding: 8rpx 16rpx;
+  border-radius: 18rpx;
+  background: rgba(255, 255, 255, 0.16);
+  font-size: 21rpx;
+}
+
+.info-card,
+.menu-card {
+  overflow: hidden;
+  border-radius: 24rpx;
+  background: #ffffff;
+  box-shadow: 0 8rpx 26rpx rgba(36, 73, 63, 0.05);
+}
+
+.info-row,
+.menu-item {
+  min-height: 92rpx;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 26rpx;
+  border-bottom: 1rpx solid #edf1f0;
+  font-size: 25rpx;
+}
+
+.info-row:last-child,
+.menu-item:last-child {
+  border-bottom: 0;
+}
+
+.info-row text:first-child {
+  color: #7d8a86;
+}
+
+.info-row text:last-child {
+  color: #31423d;
+}
+
+.device-row {
+  display: flex;
+  align-items: center;
+  padding: 26rpx;
+}
+
+.device-icon {
+  width: 68rpx;
+  height: 68rpx;
+  border-radius: 20rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #167a67;
+  background: #e8f5f1;
+  font-weight: 700;
+}
+
+.device-main {
+  flex: 1;
+  margin-left: 17rpx;
+}
+
+.device-name {
+  font-size: 27rpx;
+  font-weight: 700;
+}
+
+.device-code {
+  margin-top: 5rpx;
+  color: #8a9692;
+  font-size: 20rpx;
+}
+
+.device-stats {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  padding: 22rpx 0;
+  border-top: 1rpx solid #edf1f0;
+}
+
+.device-stats view {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.device-stats view + view {
+  border-left: 1rpx solid #edf1f0;
+}
+
+.device-stats text:first-child {
+  color: #1d2b27;
+  font-size: 28rpx;
+  font-weight: 700;
+}
+
+.device-stats text:last-child {
+  margin-top: 4rpx;
+  color: #8a9692;
+  font-size: 20rpx;
+}
+
+.menu-card {
+  margin-top: 28rpx;
+}
+
+.menu-item text {
+  color: #9aa3a0;
+  font-size: 22rpx;
+}
+
+.reset-btn {
+  width: 100%;
+  margin-top: 28rpx;
+}
+
+.version {
+  padding: 24rpx 0 8rpx;
+  color: #a0aaa6;
+  font-size: 20rpx;
+  text-align: center;
+}

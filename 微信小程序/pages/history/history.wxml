@@ -1,0 +1,36 @@
+<view class="page">
+  <view class="history-head">
+    <view class="head-title">服药事件记录</view>
+    <view class="head-sub">记录药盒开盒事件和超时未开盒情况</view>
+  </view>
+
+  <view class="filter-row">
+    <view
+      class="filter-chip {{filter === item.key ? 'active' : ''}}"
+      wx:for="{{filters}}"
+      wx:key="key"
+      data-key="{{item.key}}"
+      bindtap="changeFilter"
+    >
+      {{item.label}}
+    </view>
+  </view>
+
+  <view class="record-card" wx:for="{{history}}" wx:key="id">
+    <view class="record-icon {{item.statusClass}}">{{item.result === 'COMPLETED' ? '✓' : '!'}}</view>
+    <view class="record-main">
+      <view class="record-head">
+        <view>{{item.date}} · {{item.slot}}</view>
+        <view class="status-tag {{item.statusClass}}">{{item.resultLabel}}</view>
+      </view>
+      <view class="record-medicine">{{item.medicine}}</view>
+      <view class="record-event">{{item.event}}</view>
+    </view>
+  </view>
+
+  <view class="empty" wx:if="{{!history.length}}">当前筛选条件下没有记录</view>
+
+  <view class="boundary-note">
+    历史记录中的“已完成”仅表示检测到开盒事件；正式系统还会保存设备编号、事件时间和任务编号用于追踪。
+  </view>
+</view>

@@ -1,0 +1,55 @@
+<view class="page">
+  <view class="profile-card">
+    <view class="profile-avatar">李</view>
+    <view class="profile-name">{{elder.name}}</view>
+    <view class="profile-sub">{{elder.age}}岁 · {{elder.relation}} · {{elder.address}}</view>
+    <view class="condition-row">
+      <view class="condition" wx:for="{{elder.conditions}}" wx:key="*this">{{item}}</view>
+    </view>
+  </view>
+
+  <view class="section-title">
+    <view class="title">老人档案</view>
+  </view>
+  <view class="info-card">
+    <view class="info-row"><text>姓名</text><text>{{elder.name}}</text></view>
+    <view class="info-row"><text>年龄</text><text>{{elder.age}} 岁</text></view>
+    <view class="info-row"><text>居住地址</text><text>{{elder.address}}</text></view>
+    <view class="info-row"><text>紧急联系人</text><text>{{elder.emergencyContact}}</text></view>
+  </view>
+
+  <view class="section-title">
+    <view class="title">绑定设备</view>
+  </view>
+  <view class="info-card">
+    <view class="device-row">
+      <view class="device-icon">药</view>
+      <view class="device-main">
+        <view class="device-name">{{device.name}}</view>
+        <view class="device-code">{{device.code}}</view>
+      </view>
+      <view class="status-tag status-completed" wx:if="{{device.online}}">在线</view>
+      <view class="status-tag status-offline" wx:else>离线</view>
+    </view>
+    <view class="device-stats">
+      <view><text>{{device.battery}}%</text><text>剩余电量</text></view>
+      <view><text>{{device.lastSeen}}</text><text>最后通信</text></view>
+    </view>
+  </view>
+
+  <view class="menu-card">
+    <view class="menu-item" bindtap="goHistory">
+      <view>服药历史记录</view><text>›</text>
+    </view>
+    <view class="menu-item">
+      <view>通知设置</view><text>原型占位</text>
+    </view>
+    <view class="menu-item">
+      <view>关于项目</view><text>课程 Demo</text>
+    </view>
+  </view>
+
+  <button class="secondary-btn reset-btn" bindtap="resetDemo">重置全部演示数据</button>
+
+  <view class="version">安心药伴 Demo v0.1 · 模拟数据</view>
+</view>

@@ -1,0 +1,49 @@
+<view class="page">
+  <view class="plan-summary">
+    <view>
+      <view class="summary-title">本周用药计划</view>
+      <view class="summary-sub">由家属维护，药盒将按计划提醒老人</view>
+    </view>
+    <view class="plan-count">{{plans.length}}<text>项</text></view>
+  </view>
+
+  <view class="section-title">
+    <view class="title">计划列表</view>
+    <view class="more">一位老人</view>
+  </view>
+
+  <view
+    class="plan-card {{item.enabled ? '' : 'disabled'}}"
+    wx:for="{{plans}}"
+    wx:key="id"
+  >
+    <view class="plan-accent"></view>
+    <view class="plan-main">
+      <view class="plan-head">
+        <view>
+          <view class="medicine-name">{{item.medicine}}</view>
+          <view class="medicine-dose">{{item.dosage}} · {{item.note}}</view>
+        </view>
+        <switch
+          color="#167A67"
+          checked="{{item.enabled}}"
+          data-id="{{item.id}}"
+          bindchange="togglePlan"
+        />
+      </view>
+      <view class="schedule-row">
+        <view class="time-box">{{item.time}}</view>
+        <view class="schedule-copy">
+          <view>{{item.schedule}}</view>
+          <text>{{item.enabled ? '药盒将正常提醒' : '该计划已暂停'}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <button class="primary-btn add-btn" bindtap="addPlan">＋ 新增演示计划</button>
+
+  <view class="form-note">
+    正式版本中，“新增计划”将包含药物名称、每次剂量、服药星期、早中晚时段和提醒时间等表单字段。
+  </view>
+</view>

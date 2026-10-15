@@ -1,0 +1,47 @@
+{
+  "pages": [
+    "pages/home/home",
+    "pages/pillbox/pillbox",
+    "pages/plans/plans",
+    "pages/alerts/alerts",
+    "pages/profile/profile",
+    "pages/history/history"
+  ],
+  "window": {
+    "navigationBarTitleText": "安心药伴",
+    "navigationBarBackgroundColor": "#F7FAF9",
+    "navigationBarTextStyle": "black",
+    "backgroundColor": "#F4F7F6",
+    "backgroundTextStyle": "light"
+  },
+  "tabBar": {
+    "color": "#8A9692",
+    "selectedColor": "#167A67",
+    "backgroundColor": "#FFFFFF",
+    "borderStyle": "white",
+    "list": [
+      {
+        "pagePath": "pages/home/home",
+        "text": "首页"
+      },
+      {
+        "pagePath": "pages/pillbox/pillbox",
+        "text": "药盒"
+      },
+      {
+        "pagePath": "pages/plans/plans",
+        "text": "计划"
+      },
+      {
+        "pagePath": "pages/alerts/alerts",
+        "text": "提醒"
+      },
+      {
+        "pagePath": "pages/profile/profile",
+        "text": "我的"
+      }
+    ]
+  },
+  "style": "v2",
+  "sitemapLocation": "sitemap.json"
+}

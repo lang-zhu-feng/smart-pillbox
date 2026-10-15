@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>安心药伴 · 系统流程图</title>
+  <style>
+    :root {
+      --ink: #17312a;
+      --muted: #63766f;
+      --green: #167a67;
+      --green2: #31947f;
+      --green-soft: #e5f5ef;
+      --blue: #327695;
+      --blue-soft: #e9f4f8;
+      --amber: #a66d13;
+      --amber-soft: #fff3d8;
+      --red: #b85444;
+      --red-soft: #fff0ed;
+      --gray-soft: #edf2f0;
+      --line: #9aaca6;
+      --card: #fff;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 8% 0%, rgba(49,148,127,.16), transparent 24%),
+        radial-gradient(circle at 96% 70%, rgba(50,118,149,.12), transparent 22%),
+        #eef3f1;
+      font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
+    }
+    .wrap {
+      width: min(1320px, calc(100% - 40px));
+      margin: auto;
+      padding: 46px 0 70px;
+    }
+    header {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      margin-bottom: 28px;
+    }
+    .eyebrow {
+      display: inline-flex;
+      padding: 7px 12px;
+      border-radius: 20px;
+      color: var(--green);
+      background: rgba(255,255,255,.78);
+      font-size: 12px;
+      font-weight: 750;
+      letter-spacing: .08em;
+    }
+    h1 { margin: 14px 0 7px; font-size: 35px; letter-spacing: -.02em; }
+    header p { margin: 0; color: var(--muted); font-size: 14px; }
+    .meta {
+      padding: 12px 15px;
+      border-radius: 14px;
+      color: var(--muted);
+      background: rgba(255,255,255,.7);
+      font-size: 12px;
+      line-height: 1.65;
+      text-align: right;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: 1.35fr .9fr;
+      gap: 22px;
+      align-items: start;
+    }
+    .panel {
+      overflow: hidden;
+      border: 1px solid rgba(31,77,65,.08);
+      border-radius: 24px;
+      background: rgba(255,255,255,.92);
+      box-shadow: 0 16px 50px rgba(33,70,60,.08);
+    }
+    .panel-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 20px 22px 16px;
+      border-bottom: 1px solid #edf1ef;
+    }
+    .panel-title { font-size: 18px; font-weight: 800; }
+    .panel-sub { margin-top: 4px; color: var(--muted); font-size: 11px; }
+    .number {
+      width: 34px; height: 34px;
+      display: grid; place-items: center;
+      border-radius: 11px;
+      color: #fff;
+      background: var(--green);
+      font-size: 13px;
+      font-weight: 800;
+    }
+    .panel-body { padding: 22px; }
+    .flow {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .node {
+      width: min(430px, 100%);
+      position: relative;
+      padding: 12px 15px;
+      border: 1px solid #d9e4e0;
+      border-radius: 14px;
+      background: #f9fbfa;
+      font-size: 13px;
+      line-height: 1.45;
+      text-align: center;
+    }
+    .node strong { display: block; margin-bottom: 2px; }
+    .node.start, .node.finish { color: #fff; border-color: transparent; background: linear-gradient(135deg,var(--green),var(--green2)); }
+    .node.system { color: #245c70; border-color: #cae1e9; background: var(--blue-soft); }
+    .node.device { color: #86600f; border-color: #f0dfb4; background: var(--amber-soft); }
+    .node.alert { color: #9c483a; border-color: #efc9c2; background: var(--red-soft); }
+    .arrow {
+      width: 2px;
+      height: 23px;
+      position: relative;
+      background: var(--line);
+    }
+    .arrow::after {
+      content: "";
+      position: absolute;
+      left: -4px;
+      bottom: -1px;
+      width: 8px; height: 8px;
+      border-right: 2px solid var(--line);
+      border-bottom: 2px solid var(--line);
+      transform: rotate(45deg);
+    }
+    .decision {
+      width: min(360px, 92%);
+      padding: 12px 18px;
+      border: 1px solid #e7d6a6;
+      border-radius: 50%;
+      color: #79580d;
+      background: #fff8e8;
+      font-size: 13px;
+      font-weight: 700;
+      text-align: center;
+    }
+    .branch {
+      width: 100%;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      position: relative;
+      margin-top: 24px;
+    }
+    .branch::before {
+      content: "";
+      position: absolute;
+      top: -13px;
+      left: 25%;
+      right: 25%;
+      height: 1px;
+      background: var(--line);
+    }
+    .branch-item { position: relative; }
+    .branch-item::before {
+      content: "";
+      position: absolute;
+      top: -13px;
+      left: 50%;
+      width: 1px;
+      height: 13px;
+      background: var(--line);
+    }
+    .branch-label {
+      position: absolute;
+      top: -28px;
+      left: 50%;
+      padding: 1px 6px;
+      transform: translateX(-50%);
+      color: var(--muted);
+      background: #fff;
+      font-size: 10px;
+    }
+    .mini-flow { display: flex; flex-direction: column; align-items: center; }
+    .mini-flow .node { min-height: 58px; display: grid; place-items: center; font-size: 12px; }
+    .boundary {
+      margin-top: 15px;
+      padding: 11px 13px;
+      border-radius: 12px;
+      color: #66766f;
+      background: var(--gray-soft);
+      font-size: 11px;
+      line-height: 1.55;
+    }
+    .state-list { display: grid; gap: 10px; }
+    .state-row {
+      display: grid;
+      grid-template-columns: 118px 28px 1fr;
+      align-items: center;
+      gap: 8px;
+    }
+    .state {
+      padding: 10px 9px;
+      border-radius: 12px;
+      font-size: 11px;
+      font-weight: 750;
+      text-align: center;
+    }
+    .state-arrow { color: #91a39d; font-size: 19px; text-align: center; }
+    .state-note { color: #60716b; font-size: 11px; line-height: 1.45; }
+    .s-pending { background: var(--gray-soft); }
+    .s-reminding { color: var(--amber); background: var(--amber-soft); }
+    .s-completed { color: var(--green); background: var(--green-soft); }
+    .s-overdue { color: var(--red); background: var(--red-soft); }
+    .s-offline { color: #626b7c; background: #eceef3; }
+    .architecture { display: grid; grid-template-columns: repeat(4,1fr); gap: 12px; }
+    .actor {
+      min-height: 112px;
+      padding: 14px 11px;
+      border-radius: 16px;
+      border: 1px solid #dde6e3;
+      background: #fafcfb;
+      text-align: center;
+    }
+    .actor-icon {
+      width: 38px; height: 38px;
+      margin: 0 auto 9px;
+      display: grid; place-items: center;
+      border-radius: 12px;
+      color: #fff;
+      background: var(--green);
+      font-size: 12px;
+      font-weight: 800;
+    }
+    .actor strong { display: block; font-size: 12px; }
+    .actor span { display: block; margin-top: 6px; color: var(--muted); font-size: 10px; line-height: 1.45; }
+    .data-flow {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      margin: 18px 0 3px;
+      color: #62736d;
+      font-size: 10px;
+    }
+    .data-flow i { flex: 1; height: 1px; position: relative; background: #a3b2ad; }
+    .data-flow i::after {
+      content:"";
+      position:absolute; right:0; top:-3px;
+      width:6px; height:6px;
+      border-right:1px solid #879a93;
+      border-top:1px solid #879a93;
+      transform:rotate(45deg);
+    }
+    .demo-flow {
+      display: grid;
+      grid-template-columns: repeat(5,1fr);
+      gap: 20px;
+      align-items: stretch;
+    }
+    .demo-step {
+      position: relative;
+      min-height: 112px;
+      padding: 14px;
+      border-radius: 16px;
+      background: #f8fbfa;
+      border: 1px solid #dce6e2;
+    }
+    .demo-step:not(:last-child)::after {
+      content:"›";
+      position:absolute;
+      right:-15px; top:39px;
+      color:#8fa29b;
+      font-size:28px;
+    }
+    .demo-step b {
+      width: 25px; height:25px;
+      display:grid; place-items:center;
+      border-radius:8px;
+      color:#fff; background:var(--green);
+      font-size:10px;
+    }
+    .demo-step strong { display:block; margin-top:10px; font-size:12px; }
+    .demo-step span { display:block; margin-top:5px; color:var(--muted); font-size:10px; line-height:1.45; }
+    .wide { grid-column: 1 / -1; }
+    @media (max-width: 900px) {
+      header { align-items:flex-start; gap:15px; flex-direction:column; }
+      .meta { text-align:left; }
+      .grid { grid-template-columns:1fr; }
+      .architecture { grid-template-columns:1fr 1fr; }
+      .demo-flow { grid-template-columns:1fr; }
+      .demo-step:not(:last-child)::after { display:none; }
+    }
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <header>
+      <div>
+        <span class="eyebrow">MEDGUARD · SYSTEM FLOW</span>
+        <h1>安心药伴 · 系统流程图</h1>
+        <p>家属端微信小程序 × FastAPI 后端 × MySQL × ESP32 智能药盒</p>
+      </div>
+      <div class="meta">版本 v0.1<br>2026-09-23 · 课程项目原型</div>
+    </header>
+
+    <section class="grid">
+      <article class="panel">
+        <div class="panel-head">
+          <div><div class="panel-title">核心业务闭环</div><div class="panel-sub">从家属设置计划，到开盒记录或漏服风险提醒</div></div>
+          <span class="number">01</span>
+        </div>
+        <div class="panel-body">
+          <div class="flow">
+            <div class="node start"><strong>家属设置用药计划</strong>选择药物、剂量、星期、早中晚时段和提醒时间</div>
+            <div class="arrow"></div>
+            <div class="node system"><strong>后端生成服药任务</strong>任务映射到 7 天 × 3 时段的 21 个逻辑药格</div>
+            <div class="arrow"></div>
+            <div class="node device"><strong>进入服药时间段</strong>智能药盒通过蜂鸣或语音提醒老人</div>
+            <div class="arrow"></div>
+            <div class="decision">是否检测到对应药格开盒？</div>
+            <div class="branch">
+              <div class="branch-item">
+                <span class="branch-label">是</span>
+                <div class="mini-flow">
+                  <div class="node system"><strong>ESP32 上传开盒事件</strong>设备编号、药格编号和事件时间</div>
+                  <div class="arrow"></div>
+                  <div class="node finish"><strong>任务标记为已完成</strong>小程序同步状态并写入历史记录</div>
+                </div>
+              </div>
+              <div class="branch-item">
+                <span class="branch-label">否</span>
+                <div class="mini-flow">
+                  <div class="node device"><strong>继续提醒并等待</strong>每 10 分钟提醒，最多 3 次</div>
+                  <div class="arrow"></div>
+                  <div class="node alert"><strong>超时仍未开盒</strong>任务标记已逾期，宽限 15 分钟后生成提醒</div>
+                  <div class="arrow"></div>
+                  <div class="node alert"><strong>家属查看异常</strong>联系老人确认实际情况</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="boundary">边界说明：“已完成”只表示系统检测到对应药格的开盒事件，不代表医学意义上的确认服药。</div>
+        </div>
+      </article>
+
+      <article class="panel">
+        <div class="panel-head">
+          <div><div class="panel-title">任务状态流转</div><div class="panel-sub">MVP 使用的六种任务状态</div></div>
+          <span class="number">02</span>
+        </div>
+        <div class="panel-body">
+          <div class="state-list">
+            <div class="state-row"><span class="state s-pending">PENDING<br>待服药</span><span class="state-arrow">→</span><span class="state-note">用药计划已生成任务，尚未进入服药时段。</span></div>
+            <div class="state-row"><span class="state s-reminding">REMINDING<br>提醒中</span><span class="state-arrow">→</span><span class="state-note">进入服药时间段，药盒正在按规则提醒。</span></div>
+            <div class="state-row"><span class="state s-completed">COMPLETED<br>已完成</span><span class="state-arrow">✓</span><span class="state-note">检测到有效开盒事件，记录完成时间。</span></div>
+            <div class="state-row"><span class="state s-overdue">OVERDUE<br>已逾期</span><span class="state-arrow">!</span><span class="state-note">时间段结束仍未开盒，宽限期后通知家属。</span></div>
+            <div class="state-row"><span class="state s-offline">DEVICE_OFFLINE<br>设备离线</span><span class="state-arrow">↺</span><span class="state-note">设备失联；恢复后根据当前时间重新判断状态。</span></div>
+            <div class="state-row"><span class="state">NO_MEDICATION<br>无需服药</span><span class="state-arrow">—</span><span class="state-note">当天该时段没有用药计划，不生成提醒。</span></div>
+          </div>
+          <div class="boundary">主要路径：待服药 → 提醒中 → 已完成；异常路径：提醒中 → 已逾期 → 家属提醒。</div>
+        </div>
+      </article>
+
+      <article class="panel">
+        <div class="panel-head">
+          <div><div class="panel-title">系统角色与数据交互</div><div class="panel-sub">正式开发阶段各部分的职责</div></div>
+          <span class="number">03</span>
+        </div>
+        <div class="panel-body">
+          <div class="architecture">
+            <div class="actor"><div class="actor-icon">家</div><strong>家属</strong><span>维护计划<br>查看状态和异常</span></div>
+            <div class="actor"><div class="actor-icon" style="background:#327695">微</div><strong>微信小程序</strong><span>展示页面<br>调用 REST API</span></div>
+            <div class="actor"><div class="actor-icon" style="background:#8065a6">API</div><strong>FastAPI + MySQL</strong><span>业务判断<br>保存任务和事件</span></div>
+            <div class="actor"><div class="actor-icon" style="background:#b57a25">盒</div><strong>ESP32 药盒</strong><span>按时提醒<br>上传开盒事件</span></div>
+          </div>
+          <div class="data-flow"><span>计划与查询</span><i></i><span>任务与状态</span><i></i><span>提醒与事件</span></div>
+          <div class="boundary">当前 Demo 只实现家属端页面和本地模拟数据；后续再依次接入 FastAPI、MySQL 与 ESP32。</div>
+        </div>
+      </article>
+
+      <article class="panel">
+        <div class="panel-head">
+          <div><div class="panel-title">提醒判断规则</div><div class="panel-sub">默认 MVP 时间规则</div></div>
+          <span class="number">04</span>
+        </div>
+        <div class="panel-body">
+          <div class="state-list">
+            <div class="state-row"><span class="state s-reminding">第 1 次</span><span class="state-arrow">→</span><span class="state-note">进入服药时间段立即提醒。</span></div>
+            <div class="state-row"><span class="state s-reminding">+10 分钟</span><span class="state-arrow">→</span><span class="state-note">仍未开盒则再次提醒。</span></div>
+            <div class="state-row"><span class="state s-reminding">最多 3 次</span><span class="state-arrow">→</span><span class="state-note">达到次数后继续等待时间段结束。</span></div>
+            <div class="state-row"><span class="state s-overdue">时间段结束</span><span class="state-arrow">→</span><span class="state-note">任务进入“已逾期”。</span></div>
+            <div class="state-row"><span class="state s-overdue">+15 分钟</span><span class="state-arrow">!</span><span class="state-note">仍未开盒，生成家属异常通知。</span></div>
+          </div>
+        </div>
+      </article>
+
+      <article class="panel wide">
+        <div class="panel-head">
+          <div><div class="panel-title">Demo 演示路径</div><div class="panel-sub">答辩时约 2—3 分钟即可演示完整核心闭环</div></div>
+          <span class="number">05</span>
+        </div>
+        <div class="panel-body">
+          <div class="demo-flow">
+            <div class="demo-step"><b>1</b><strong>打开首页</strong><span>介绍老人、药盒在线状态和今日任务。</span></div>
+            <div class="demo-step"><b>2</b><strong>模拟开盒</strong><span>任务由提醒中变为已完成，进度同步更新。</span></div>
+            <div class="demo-step"><b>3</b><strong>查看 21 格药盒</strong><span>展示一周早、中、晚的逻辑药格状态。</span></div>
+            <div class="demo-step"><b>4</b><strong>模拟超时</strong><span>生成“可能漏服”的家属异常提醒。</span></div>
+            <div class="demo-step"><b>5</b><strong>核对历史</strong><span>说明开盒事件、逾期记录与医学边界。</span></div>
+          </div>
+        </div>
+      </article>
+    </section>
+  </main>
+</body>
+</html>

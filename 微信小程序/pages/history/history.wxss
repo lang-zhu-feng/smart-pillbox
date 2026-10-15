@@ -1,0 +1,99 @@
+.history-head {
+  padding: 28rpx;
+  border-radius: 26rpx;
+  color: #ffffff;
+  background: linear-gradient(135deg, #4a6570, #718b91);
+}
+
+.head-title {
+  font-size: 32rpx;
+  font-weight: 700;
+}
+
+.head-sub {
+  margin-top: 8rpx;
+  font-size: 22rpx;
+  opacity: 0.78;
+}
+
+.filter-row {
+  display: flex;
+  gap: 14rpx;
+  padding: 26rpx 0 20rpx;
+}
+
+.filter-chip {
+  padding: 14rpx 26rpx;
+  border-radius: 24rpx;
+  color: #6f7e79;
+  background: #e8edeb;
+  font-size: 23rpx;
+}
+
+.filter-chip.active {
+  color: #ffffff;
+  background: #167a67;
+}
+
+.record-card {
+  display: flex;
+  margin-bottom: 18rpx;
+  padding: 26rpx;
+  border-radius: 24rpx;
+  background: #ffffff;
+  box-shadow: 0 8rpx 26rpx rgba(36, 73, 63, 0.05);
+}
+
+.record-icon {
+  width: 58rpx;
+  height: 58rpx;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  font-weight: 750;
+}
+
+.record-main {
+  flex: 1;
+  min-width: 0;
+  margin-left: 18rpx;
+}
+
+.record-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 26rpx;
+  font-weight: 700;
+}
+
+.record-medicine {
+  margin-top: 12rpx;
+  color: #4f605b;
+  font-size: 24rpx;
+}
+
+.record-event {
+  margin-top: 8rpx;
+  color: #8a9692;
+  font-size: 21rpx;
+}
+
+.empty {
+  padding: 80rpx 0;
+  color: #9aa3a0;
+  font-size: 24rpx;
+  text-align: center;
+}
+
+.boundary-note {
+  margin-top: 24rpx;
+  padding: 24rpx;
+  border-radius: 20rpx;
+  color: #66736f;
+  background: #eaf0ee;
+  font-size: 22rpx;
+  line-height: 1.65;
+}
