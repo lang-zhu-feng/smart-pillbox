@@ -60,3 +60,9 @@ logs/
 .DS_Store
 Thumbs.db
 Desktop.ini
+
+# Temporary public demo processes, client executable, links and dependency folders
+/公网扫码演示/tools/
+/公网扫码演示/processes.json
+/公网扫码演示/public-link.json
+/公网扫码演示/python-deps/

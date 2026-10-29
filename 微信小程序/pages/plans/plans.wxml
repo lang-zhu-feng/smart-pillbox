@@ -1,4 +1,5 @@
 <view class="page">
+  <view class="connection-error" wx:if="{{connectionError}}">{{connectionError}}</view>
   <view class="plan-summary">
     <view>
       <view class="summary-title">本周用药计划</view>
@@ -25,7 +26,7 @@
           <view class="medicine-dose">{{item.dosage}} · {{item.note}}</view>
         </view>
         <switch
-          color="#167A67"
+          color="#B86C50"
           checked="{{item.enabled}}"
           data-id="{{item.id}}"
           bindchange="togglePlan"
@@ -41,9 +42,18 @@
     </view>
   </view>
 
-  <button class="primary-btn add-btn" bindtap="addPlan">＋ 新增演示计划</button>
+  <button class="primary-btn add-btn" bindtap="addPlan">{{formOpen ? '收起表单' : '＋ 新增计划'}}</button>
+  <form class="card plan-form" wx:if="{{formOpen}}" bindsubmit="savePlan">
+    <view class="form-field"><text>药品名称</text><input name="medicine" maxlength="60" placeholder="请按医嘱填写"/></view>
+    <view class="form-field"><text>每次剂量</text><input name="dosage" maxlength="40" placeholder="按医嘱填写剂量"/></view>
+    <view class="form-field"><text>药格时段</text><picker range="{{slots}}" value="{{slotIndex}}" bindchange="changeSlot"><view class="picker-input">{{slots[slotIndex]}} ›</view></picker></view>
+    <view class="form-field"><text>提醒时间</text><picker mode="time" value="{{time}}" bindchange="changeTime"><view class="picker-input">{{time}} ›</view></picker></view>
+    <view class="form-field"><text>重复星期</text><checkbox-group name="days" class="days-row"><label wx:for="{{days}}" wx:key="value"><checkbox value="{{item.value}}" checked color="#B86C50"/>{{item.name}}</label></checkbox-group></view>
+    <view class="form-field"><text>备注</text><input name="note" maxlength="160" placeholder="可选"/></view>
+    <button class="primary-btn" form-type="submit">保存计划</button>
+  </form>
 
   <view class="form-note">
-    正式版本中，“新增计划”将包含药物名称、每次剂量、服药星期、早中晚时段和提醒时间等表单字段。
+    同一药格内多项计划需要相同提醒时间。示例药品仅供演示；真实用药安排请遵医嘱。
   </view>
 </view>

@@ -47,7 +47,7 @@
 }
 
 .toolbar-action {
-  color: #167a67;
+  color: #b86c50;
   font-size: 24rpx;
 }
 
@@ -57,7 +57,7 @@
   padding: 26rpx;
   border-radius: 24rpx;
   background: #ffffff;
-  box-shadow: 0 8rpx 26rpx rgba(36, 73, 63, 0.05);
+  box-shadow: 0 8rpx 26rpx rgba(116, 77, 53, 0.05);
 }
 
 .alert-card.unread {
@@ -116,7 +116,7 @@
 
 .alert-detail {
   margin-top: 10rpx;
-  color: #687772;
+  color: #9b8471;
   font-size: 23rpx;
   line-height: 1.55;
 }
@@ -125,7 +125,7 @@
   display: flex;
   justify-content: space-between;
   margin-top: 16rpx;
-  color: #9aa3a0;
+  color: #ad9985;
   font-size: 20rpx;
 }
 
@@ -143,14 +143,14 @@
   padding: 26rpx;
   border-radius: 22rpx;
   color: #63716d;
-  background: #eaf0ee;
+  background: #f2e6d8;
   font-size: 22rpx;
   line-height: 1.85;
 }
 
 .safety-title {
   margin-bottom: 6rpx;
-  color: #3f514c;
+  color: #806652;
   font-size: 25rpx;
   font-weight: 700;
 }

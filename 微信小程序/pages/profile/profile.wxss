@@ -2,7 +2,7 @@
   padding: 40rpx 28rpx;
   border-radius: 30rpx;
   color: #ffffff;
-  background: linear-gradient(135deg, #167a67, #3d9784);
+  background: linear-gradient(135deg, #b86c50, #c79270);
   text-align: center;
 }
 
@@ -51,7 +51,7 @@
   overflow: hidden;
   border-radius: 24rpx;
   background: #ffffff;
-  box-shadow: 0 8rpx 26rpx rgba(36, 73, 63, 0.05);
+  box-shadow: 0 8rpx 26rpx rgba(116, 77, 53, 0.05);
 }
 
 .info-row,
@@ -61,7 +61,7 @@
   align-items: center;
   justify-content: space-between;
   padding: 0 26rpx;
-  border-bottom: 1rpx solid #edf1f0;
+  border-bottom: 1rpx solid #eee2d4;
   font-size: 25rpx;
 }
 
@@ -71,11 +71,11 @@
 }
 
 .info-row text:first-child {
-  color: #7d8a86;
+  color: #a18b77;
 }
 
 .info-row text:last-child {
-  color: #31423d;
+  color: #816953;
 }
 
 .device-row {
@@ -91,8 +91,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #167a67;
-  background: #e8f5f1;
+  color: #b86c50;
+  background: #f4e6d8;
   font-weight: 700;
 }
 
@@ -108,7 +108,7 @@
 
 .device-code {
   margin-top: 5rpx;
-  color: #8a9692;
+  color: #a18b77;
   font-size: 20rpx;
 }
 
@@ -116,7 +116,7 @@
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   padding: 22rpx 0;
-  border-top: 1rpx solid #edf1f0;
+  border-top: 1rpx solid #eee2d4;
 }
 
 .device-stats view {
@@ -126,18 +126,18 @@
 }
 
 .device-stats view + view {
-  border-left: 1rpx solid #edf1f0;
+  border-left: 1rpx solid #eee2d4;
 }
 
 .device-stats text:first-child {
-  color: #1d2b27;
+  color: #4d3c33;
   font-size: 28rpx;
   font-weight: 700;
 }
 
 .device-stats text:last-child {
   margin-top: 4rpx;
-  color: #8a9692;
+  color: #a18b77;
   font-size: 20rpx;
 }
 
@@ -146,7 +146,7 @@
 }
 
 .menu-item text {
-  color: #9aa3a0;
+  color: #ad9985;
   font-size: 22rpx;
 }
 
@@ -157,7 +157,7 @@
 
 .version {
   padding: 24rpx 0 8rpx;
-  color: #a0aaa6;
+  color: #b7a38e;
   font-size: 20rpx;
   text-align: center;
 }

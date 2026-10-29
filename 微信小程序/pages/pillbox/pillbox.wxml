@@ -1,12 +1,12 @@
 <view class="page">
+  <view class="connection-error" wx:if="{{connectionError}}">{{connectionError}}</view>
   <view class="device-strip">
     <view class="device-mark">药</view>
     <view class="device-copy">
       <view class="device-name">{{device.name}}</view>
-      <view class="device-meta">{{device.code}} · 电量 {{device.battery}}%</view>
+      <view class="device-meta">{{device.code}} · {{device.battery == null ? '电量待上报' : '电量 ' + device.battery + '%'}}</view>
     </view>
-    <view class="online-badge" wx:if="{{device.online}}"><text></text>在线</view>
-    <view class="offline-badge" wx:else>离线</view>
+    <view class="offline-badge" bindtap="goDevice">{{deviceLabel}} ›</view>
   </view>
 
   <view class="intro">
@@ -59,6 +59,6 @@
   <button class="danger-btn" bindtap="simulateOverdue">模拟一次“超时未开盒”</button>
 
   <view class="tip">
-    Demo 中的药格事件为模拟数据。正式系统将由 ESP32 上传真实开盒事件。
+    点按操作标记为软件模拟；ESP32 接入后可上传真实开盒事件。开盒不等于已服药。
   </view>
 </view>

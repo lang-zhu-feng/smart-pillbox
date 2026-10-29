@@ -1,35 +1,7 @@
 const store = require('../../utils/store')
-
-Page({
-  data: {
-    filter: 'ALL',
-    filters: [
-      { key: 'ALL', label: '全部' },
-      { key: 'COMPLETED', label: '已完成' },
-      { key: 'OVERDUE', label: '异常' }
-    ],
-    history: []
-  },
-
-  onShow() {
-    this.refresh()
-  },
-
-  refresh() {
-    const state = store.loadState()
-    const filter = this.data.filter
-    const history = state.history
-      .filter((record) => filter === 'ALL' || record.result === filter)
-      .map((record) => ({
-        ...record,
-        resultLabel: store.statusMeta[record.result].label,
-        statusClass: store.statusMeta[record.result].className
-      }))
-    this.setData({ history })
-  },
-
-  changeFilter(event) {
-    this.setData({ filter: event.currentTarget.dataset.key })
-    this.refresh()
-  }
-})
+Page(store.page({
+  data: { filter: 'ALL', filters: [{ key: 'ALL', label: '全部' }, { key: 'COMPLETED', label: '已开盒' }, { key: 'OVERDUE', label: '待确认' }], history: [] },
+  applyState(state) { this._state = state; this.renderRecords() },
+  renderRecords() { this.setData({ history: this._state.history.filter(h => this.data.filter === 'ALL' || h.result === this.data.filter).map(h => ({ ...h, resultLabel: store.statusMeta[h.result].label, statusClass: store.statusMeta[h.result].className, sourceLabel: store.sourceLabel(h.source) })) }) },
+  changeFilter(event) { this.setData({ filter: event.currentTarget.dataset.key }); if (this._state) this.renderRecords() }
+}))

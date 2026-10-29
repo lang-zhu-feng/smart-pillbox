@@ -1,7 +1,36 @@
 {
   "description": "独居老人智能用药管理系统家属端 Demo",
   "packOptions": {
-    "ignore": [],
+    "ignore": [
+      {
+        "type": "folder",
+        "value": "微信web开发者工具"
+      },
+      {
+        "type": "file",
+        "value": "preview.html"
+      },
+      {
+        "type": "file",
+        "value": "README.md"
+      },
+      {
+        "type": "file",
+        "value": "Demo首页预览.png"
+      },
+      {
+        "type": "file",
+        "value": "assets/demo.js"
+      },
+      {
+        "type": "file",
+        "value": "assets/demo.css"
+      },
+      {
+        "type": "file",
+        "value": "assets/home-scene.svg"
+      }
+    ],
     "include": []
   },
   "setting": {

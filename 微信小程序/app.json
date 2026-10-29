@@ -5,19 +5,21 @@
     "pages/plans/plans",
     "pages/alerts/alerts",
     "pages/profile/profile",
-    "pages/history/history"
+    "pages/history/history",
+    "pages/auth/auth",
+    "pages/device/device"
   ],
   "window": {
     "navigationBarTitleText": "安心药伴",
-    "navigationBarBackgroundColor": "#F7FAF9",
+    "navigationBarBackgroundColor": "#FFFAF3",
     "navigationBarTextStyle": "black",
-    "backgroundColor": "#F4F7F6",
+    "backgroundColor": "#FFFAF3",
     "backgroundTextStyle": "light"
   },
   "tabBar": {
-    "color": "#8A9692",
-    "selectedColor": "#167A67",
-    "backgroundColor": "#FFFFFF",
+    "color": "#AC9683",
+    "selectedColor": "#B86C50",
+    "backgroundColor": "#FFFAF3",
     "borderStyle": "white",
     "list": [
       {

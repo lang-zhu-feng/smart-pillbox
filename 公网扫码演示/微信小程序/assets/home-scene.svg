@@ -1,0 +1,72 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 660" role="img" aria-label="阳光照进客厅，家人坐在沙发旁相伴，一只小猫安睡在地毯上">
+<defs>
+ <linearGradient id="wall" x2="0" y2="1"><stop stop-color="#f6e9d8"/><stop offset="1" stop-color="#f0dcc5"/></linearGradient>
+ <linearGradient id="light" x2="1" y2="1"><stop stop-color="#fff8df" stop-opacity=".85"/><stop offset="1" stop-color="#fff8df" stop-opacity="0"/></linearGradient>
+ <linearGradient id="sofa" x2="0" y2="1"><stop stop-color="#cc9275"/><stop offset="1" stop-color="#b5785f"/></linearGradient>
+</defs>
+<rect width="900" height="660" fill="url(#wall)"/>
+<path d="M0 522H900V660H0Z" fill="#ead4ba"/>
+<path d="M58 24H348V327H58Z" fill="#bda48c"/>
+<path d="M68 34H338V317H68Z" fill="#e7eff0"/>
+<path d="M78 44H328V307H78Z" fill="#dce7e5"/>
+<path d="M80 250Q140 185 206 237T328 215V307H80Z" fill="#a8b7a1"/>
+<path d="M80 285Q170 215 328 278V307H80Z" fill="#b9c5ab"/>
+<circle cx="264" cy="106" r="36" fill="#fff2ce"/>
+<path d="M200 36V315M70 174H337" fill="none" stroke="#faf2e5" stroke-width="11"/>
+<path d="M48 16H108L93 336H35Z" fill="#efe0ca"/>
+<path d="M315 16H363L380 336H329Z" fill="#e9d6bc"/>
+<path d="M83 301L331 301L778 660H200Z" fill="url(#light)"/>
+<path d="M718 49H827V199H718Z" fill="#c8ae91"/><path d="M729 60H816V188H729Z" fill="#faf4e8"/>
+<path d="M742 154Q770 80 803 158" fill="none" stroke="#baa185" stroke-width="5"/>
+<circle cx="772" cy="102" r="13" fill="#dca98e"/>
+<ellipse cx="443" cy="585" rx="340" ry="60" fill="#d4bda0" opacity=".6"/>
+<ellipse cx="449" cy="579" rx="302" ry="48" fill="#f7e9d6"/>
+<path d="M260 353Q260 318 297 318H636Q673 318 673 354V488H260Z" fill="url(#sofa)"/>
+<path d="M289 345H450V467H289ZM470 345H645V467H470Z" fill="#d7a286"/>
+<rect x="264" y="452" width="407" height="59" rx="19" fill="#c88c70"/>
+<rect x="238" y="390" width="57" height="128" rx="24" fill="#bf8369"/>
+<rect x="644" y="390" width="55" height="128" rx="24" fill="#bf8369"/>
+<path d="M276 514V544M660 514V544" stroke="#84624e" stroke-width="15"/>
+<path d="M475 346Q524 328 576 349L566 459H478Z" fill="#e6d8be"/>
+<path d="M490 350L544 455M519 345L573 450" stroke="#bdaf96" stroke-width="4" opacity=".6"/>
+<!-- Father reading, drawn as a domestic illustration rather than medical imagery. -->
+<path d="M344 276Q373 247 405 276L415 364H332Z" fill="#b5a084"/>
+<ellipse cx="373" cy="290" rx="38" ry="45" fill="#e0b392"/>
+<path d="M335 286Q327 244 371 239Q414 239 412 283L398 267L369 260L344 280Z" fill="#dfd8cb"/>
+<path d="M342 276Q342 266 351 264M398 276L405 280" stroke="#cec6b8" stroke-width="10"/>
+<path d="M345 284H369M378 284H402M369 285H378" stroke="#786b5d" stroke-width="3"/>
+<path d="M351 282Q354 290 362 285M383 284Q387 290 394 284" fill="none" stroke="#6f5b4e" stroke-width="2"/>
+<path d="M368 308Q377 315 386 307" fill="none" stroke="#a87560" stroke-width="3" stroke-linecap="round"/>
+<path d="M343 336Q373 322 405 338L426 437H322Z" fill="#788d85"/>
+<path d="M341 355L317 405L360 421M404 354L430 398L392 416" fill="none" stroke="#788d85" stroke-width="27" stroke-linecap="round"/>
+<path d="M337 436L347 514L324 542M394 436L403 514L424 539" fill="none" stroke="#686b6b" stroke-width="30" stroke-linecap="round"/>
+<path d="M306 545H351M398 544H443" stroke="#7d6355" stroke-width="18" stroke-linecap="round"/>
+<path d="M350 393L381 401L414 386V435L382 449L350 435Z" fill="#f6ebd4" stroke="#c1a786" stroke-width="3"/>
+<path d="M381 401V449" stroke="#d7bfa0" stroke-width="2"/>
+<ellipse cx="345" cy="415" rx="12" ry="9" fill="#dfb08d"/><ellipse cx="417" cy="411" rx="12" ry="9" fill="#dfb08d"/>
+<!-- Family member beside the sofa, sharing a cup of tea. -->
+<path d="M558 255Q554 217 589 214Q626 215 625 261L625 298H559Z" fill="#65574b"/>
+<ellipse cx="591" cy="258" rx="29" ry="35" fill="#e9bd9b"/>
+<path d="M562 249Q578 247 586 227Q600 246 623 248" fill="#65574b"/>
+<path d="M574 255L578 255M604 255L608 255" stroke="#705548" stroke-width="3" stroke-linecap="round"/>
+<path d="M584 274Q591 279 599 272" fill="none" stroke="#aa755d" stroke-width="2.5"/>
+<path d="M571 295Q592 284 612 298L632 400H546Z" fill="#eed2ad"/>
+<path d="M552 320L518 362L483 346M617 320L641 367L618 387" fill="none" stroke="#eed2ad" stroke-width="21" stroke-linecap="round"/>
+<ellipse cx="481" cy="345" rx="10" ry="8" fill="#e8bb98"/>
+<path d="M554 398L553 452L578 509M604 398L607 457L625 505" fill="none" stroke="#907a70" stroke-width="25" stroke-linecap="round"/>
+<path d="M563 514H596M609 513H642" stroke="#b47d63" stroke-width="15" stroke-linecap="round"/>
+<path d="M458 324H482V348Q470 355 458 348Z" fill="#fcf5e5"/><path d="M483 328Q500 333 483 344" fill="none" stroke="#fcf5e5" stroke-width="4"/>
+<path d="M464 314Q457 306 465 297M475 314Q468 306 476 299" fill="none" stroke="#fff9ec" stroke-width="3" opacity=".7"/>
+<!-- Side table, lamp and houseplant. -->
+<path d="M103 422H209V440H103Z" fill="#a28264"/><path d="M118 440V531M195 440V531" stroke="#a28264" stroke-width="12"/>
+<path d="M149 414V286M124 414H178" stroke="#a38664" stroke-width="6" stroke-linecap="round"/>
+<path d="M111 249H191L211 302H90Z" fill="#fff0cb"/>
+<path d="M741 416H820L808 508H754Z" fill="#c98b6a"/>
+<path d="M781 422V309" fill="none" stroke="#82906a" stroke-width="7"/>
+<path d="M780 378Q734 370 729 336Q775 335 780 378M781 350Q826 346 835 305Q789 304 781 350M779 323Q741 305 749 278Q786 292 779 323M782 399Q827 395 838 361Q798 358 782 399" fill="#9aab87"/>
+<!-- Sleeping cat. -->
+<ellipse cx="612" cy="592" rx="53" ry="25" fill="#d0ac85"/>
+<path d="M644 580L650 557L665 574L683 569L681 592Q663 612 643 599Z" fill="#d0ac85"/>
+<path d="M657 588L662 590M672 584L677 585" stroke="#906b4f" stroke-width="2.5" stroke-linecap="round"/>
+<path d="M573 590Q543 566 567 556Q584 550 589 567" fill="none" stroke="#d0ac85" stroke-width="14" stroke-linecap="round"/>
+</svg>

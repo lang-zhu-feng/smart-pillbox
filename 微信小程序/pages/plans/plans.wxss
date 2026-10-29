@@ -5,7 +5,7 @@
   padding: 32rpx;
   border-radius: 28rpx;
   color: #ffffff;
-  background: linear-gradient(135deg, #276b85, #4399a2);
+  background: linear-gradient(135deg, #b78464, #d2ab83);
 }
 
 .summary-title {
@@ -38,7 +38,7 @@
   margin-bottom: 20rpx;
   border-radius: 26rpx;
   background: #ffffff;
-  box-shadow: 0 8rpx 28rpx rgba(36, 73, 63, 0.05);
+  box-shadow: 0 8rpx 28rpx rgba(116, 77, 53, 0.05);
 }
 
 .plan-card.disabled {
@@ -47,11 +47,11 @@
 
 .plan-accent {
   width: 10rpx;
-  background: #2c8a76;
+  background: #be8563;
 }
 
 .disabled .plan-accent {
-  background: #a5aeab;
+  background: #c3b2a0;
 }
 
 .plan-main {
@@ -72,7 +72,7 @@
 
 .medicine-dose {
   margin-top: 7rpx;
-  color: #84918d;
+  color: #a18b77;
   font-size: 22rpx;
 }
 
@@ -81,15 +81,15 @@
   align-items: center;
   margin-top: 26rpx;
   padding-top: 22rpx;
-  border-top: 1rpx solid #edf1f0;
+  border-top: 1rpx solid #eee2d4;
 }
 
 .time-box {
   width: 112rpx;
   height: 68rpx;
   border-radius: 18rpx;
-  color: #167a67;
-  background: #e8f5f1;
+  color: #b86c50;
+  background: #f4e6d8;
   font-size: 28rpx;
   font-weight: 700;
   text-align: center;
@@ -98,14 +98,14 @@
 
 .schedule-copy {
   margin-left: 18rpx;
-  color: #40514c;
+  color: #816953;
   font-size: 24rpx;
 }
 
 .schedule-copy text {
   display: block;
   margin-top: 5rpx;
-  color: #8a9692;
+  color: #a18b77;
   font-size: 20rpx;
 }
 
@@ -116,7 +116,7 @@
 
 .form-note {
   padding: 24rpx 8rpx;
-  color: #8a9692;
+  color: #a18b77;
   font-size: 21rpx;
   line-height: 1.65;
   text-align: center;

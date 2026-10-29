@@ -1,10 +1,1 @@
-const store = require('./utils/store')
-
-App({
-  onLaunch() {
-    store.ensureState()
-  },
-  globalData: {
-    appName: '安心药伴'
-  }
-})
+App({ onLaunch() { /* 家庭数据由后端保存，页面登录后加载；不创建假在线设备。 */ } })

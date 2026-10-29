@@ -1,0 +1,39 @@
+<view class="auth-page">
+  <image class="auth-image" src="/assets/home-scene.png" mode="widthFix"/>
+  <view class="auth-main">
+    <view class="auth-brand">安心药伴</view>
+    <text class="auth-title">每一份惦记，
+都值得被好好安放。</text>
+    <view class="auth-sub">登录家属账号，和家人一起过好每一天。</view>
+    <view class="connection-card" wx:if="{{realDevice}}">
+      <view>手机连接电脑后端</view>
+      <view class="connection-address" selectable>{{baseURL}}</view>
+      <view class="connection-hint">电脑需运行“启动局域网联调”。更换热点后，请更新连接地址。</view>
+      <view class="connection-actions"><button class="secondary-btn" bindtap="settings">修改地址</button><button class="secondary-btn" bindtap="checkConnection" loading="{{diagnosticBusy}}" disabled="{{busy || diagnosticBusy}}">{{diagnosticBusy ? '正在检查…' : '检查连接'}}</button></view>
+      <view class="connection-hint" wx:if="{{connectionStatus}}">{{connectionStatus}}</view>
+      <view class="connection-error" wx:if="{{connectionError}}">{{connectionError}}</view>
+      <view class="diagnostic-reason" wx:if="{{diagnosticReason}}" selectable>诊断信息：{{diagnosticReason}}</view>
+    </view>
+    <view class="auth-tabs"><text class="{{register ? '' : 'selected'}}" bindtap="switchMode">{{register ? '注册家庭' : '登录家庭'}}</text><text bindtap="switchMode">{{register ? '已有账号，登录 ›' : '注册新账号 ›'}}</text></view>
+    <form bindsubmit="submit">
+      <view class="form-field" wx:if="{{register}}"><text>你的称呼</text><input name="name" maxlength="24" placeholder="例如：小刘"/></view>
+      <view class="form-field"><text>手机号</text><input name="phone" type="number" maxlength="11" placeholder="请输入 11 位手机号"/></view>
+      <view class="form-field"><text>密码</text><input name="password" password maxlength="64" placeholder="{{register ? '至少 8 位，含字母和数字' : '请输入密码'}}"/></view>
+      <view class="form-error">{{countdown ? countdown + ' 秒后可重试' : error || '登录失败 3 次后，需等待 60 秒重试。'}}</view>
+      <button class="primary-btn" form-type="submit" loading="{{busy}}" disabled="{{busy || countdown > 0}}">{{busy ? '正在登录…' : register ? '注册并进入家庭' : '登录，回家看看'}}</button>
+    </form>
+    <button class="secondary-btn demo-login" bindtap="demoLogin" loading="{{busy}}" disabled="{{busy}}">{{busy ? '正在登录…' : '先体验演示家庭'}}</button>
+    <text class="auth-privacy">演示家庭使用示例资料，请勿录入敏感信息。
+注册账号的家庭数据独立保存。</text>
+    <view class="server-link" bindtap="settings">连接设置 · {{baseURL}}</view>
+    <view class="client-version">安心药伴 · 连接修复版 0.2.3</view>
+    <form wx:if="{{settingsOpen}}" bindsubmit="saveServer">
+      <view class="form-field"><text>后端服务地址（真机使用电脑局域网 IP）</text><input name="baseURL" value="{{baseURL}}" maxlength="150"/></view>
+      <button class="secondary-btn" form-type="submit">保存并检查地址</button>
+      <button class="secondary-btn connection-check" bindtap="checkConnection" loading="{{diagnosticBusy}}" disabled="{{busy || diagnosticBusy}}">检查连接</button>
+      <view class="connection-hint" wx:if="{{connectionStatus}}">{{connectionStatus}}</view>
+      <view class="connection-error" wx:if="{{connectionError}}">{{connectionError}}</view>
+      <view class="diagnostic-reason" wx:if="{{diagnosticReason}}" selectable>诊断信息：{{diagnosticReason}}</view>
+    </form>
+  </view>
+</view>

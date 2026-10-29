@@ -1,71 +1,22 @@
 const store = require('../../utils/store')
-
-Page({
-  data: {
-    days: store.days,
-    rows: [],
-    todayIndex: 0,
-    device: {}
-  },
-
-  onShow() {
-    this.refresh()
-  },
-
-  refresh() {
-    const state = store.loadState()
+Page(store.page({
+  data: { days: store.days, rows: [], device: {}, deviceLabel: '', todayIndex: 0 },
+  applyState(state) {
+    this._state = state
     const todayIndex = store.mondayIndex(new Date())
-    const rows = store.slots.map((slot) => ({
-      ...slot,
-      startTime: slot.time.substring(0, 5),
-      cells: store.days.map((day, dayIndex) => {
-        const task = state.tasks.find((item) => item.dayIndex === dayIndex && item.slotKey === slot.key)
-        const meta = store.statusMeta[task.status]
-        return {
-          ...task,
-          shortLabel: meta.short,
-          statusLabel: meta.label,
-          statusClass: meta.className,
-          isToday: dayIndex === todayIndex
-        }
-      })
-    }))
-    this.setData({ rows, todayIndex, device: state.device })
+    const rows = store.slots.map(slot => ({ ...slot, startTime: slot.time, cells: state.tasks.filter(t => t.slotKey === slot.key).map(t => ({ ...t, statusClass: store.statusMeta[t.status].className, shortLabel: store.statusMeta[t.status].label, isToday: t.dayIndex === todayIndex })) }))
+    this.setData({ rows, todayIndex, device: state.device, deviceLabel: store.deviceLabel(state.device) })
   },
-
+  goDevice() { wx.navigateTo({ url: '/pages/device/device' }) },
   openTask(event) {
-    const taskId = event.currentTarget.dataset.id
-    const state = store.loadState()
-    const task = state.tasks.find((item) => item.id === taskId)
+    const task = this._state.tasks.find(t => t.id === event.currentTarget.dataset.id)
     if (!task) return
-    const meta = store.statusMeta[task.status]
-    const medicineText = task.medicines.length ? task.medicines.join('\n') : '本时段无需服药'
-    const canComplete = task.status !== 'NO_MEDICATION' && task.status !== 'COMPLETED'
-
-    wx.showModal({
-      title: `${task.day} · ${task.slotFullName}`,
-      content: `${task.time}\n${medicineText}\n\n当前状态：${meta.label}`,
-      showCancel: canComplete,
-      cancelText: '关闭',
-      confirmText: canComplete ? '模拟开盒' : '知道了',
-      success: (result) => {
-        if (canComplete && result.confirm) {
-          store.completeTask(taskId)
-          wx.showToast({ title: '状态已更新', icon: 'success' })
-          this.refresh()
-        }
-      }
-    })
+    const can = !['NO_MEDICATION', 'COMPLETED'].includes(task.status)
+    wx.showModal({ title: `${task.day} · ${task.slotFullName}`, content: `${task.date} ${task.time}\n${task.medicines.join('\n') || '该药格没有计划'}\n${store.statusMeta[task.status].label}${task.source ? ' · ' + store.sourceLabel(task.source) : ''}\n提醒 ${task.reminderCount}/3 次\n\n模拟操作不会让设备显示在线。`, showCancel: can, confirmText: can ? '模拟开盒' : '知道了', success: result => { if (can && result.confirm) store.run(this, () => store.request('/api/demo/tasks/' + task.id + '/open', 'POST'), '已记录模拟开盒') } })
   },
-
   simulateOverdue() {
-    let candidate = null
-    for (const row of this.data.rows) {
-      candidate = row.cells.find((task) => task.status === 'REMINDING' || task.status === 'PENDING')
-      if (candidate) break
-    }
-    store.simulateOverdue(candidate ? candidate.id : '')
-    wx.showToast({ title: '已生成异常', icon: 'none' })
-    this.refresh()
+    const task = this._state && this._state.tasks.find(t => !['NO_MEDICATION', 'COMPLETED'].includes(t.status))
+    if (!task) { store.error('请先新增或启用用药计划'); return }
+    store.run(this, () => store.request('/api/demo/tasks/' + task.id + '/overdue', 'POST'), '已生成应用内提醒')
   }
-})
+}))

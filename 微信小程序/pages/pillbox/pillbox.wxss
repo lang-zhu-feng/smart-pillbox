@@ -4,7 +4,7 @@
   padding: 26rpx;
   border-radius: 26rpx;
   color: #ffffff;
-  background: linear-gradient(135deg, #1a7d6a, #3b9b87);
+  background: linear-gradient(135deg, #b07857, #cea17a);
 }
 
 .device-mark {
@@ -62,7 +62,7 @@
 
 .intro-copy {
   margin-top: 8rpx;
-  color: #7c8985;
+  color: #a18b77;
   font-size: 23rpx;
   line-height: 1.6;
 }
@@ -71,7 +71,7 @@
   width: 100%;
   border-radius: 24rpx;
   background: #ffffff;
-  box-shadow: 0 10rpx 32rpx rgba(36, 73, 63, 0.06);
+  box-shadow: 0 10rpx 32rpx rgba(116, 77, 53, 0.06);
 }
 
 .pill-grid {
@@ -89,7 +89,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #71807b;
+  color: #a18b77;
   font-size: 22rpx;
 }
 
@@ -100,28 +100,28 @@
 
 .day-head text {
   margin-top: 3rpx;
-  color: #167a67;
+  color: #b86c50;
   font-size: 17rpx;
 }
 
 .today-head {
-  color: #167a67;
-  background: #eaf6f2;
+  color: #b86c50;
+  background: #f5e9db;
   font-weight: 700;
 }
 
 .slot-head {
   flex-direction: column;
   border-radius: 16rpx;
-  background: #f5f7f6;
-  color: #344640;
+  background: #f9f1e7;
+  color: #745d4a;
   font-size: 25rpx;
   font-weight: 700;
 }
 
 .slot-head text {
   margin-top: 3rpx;
-  color: #8a9692;
+  color: #a18b77;
   font-size: 17rpx;
   font-weight: 400;
 }
@@ -138,7 +138,7 @@
 }
 
 .pill-cell.today-cell {
-  border-color: #58a994;
+  border-color: #c99a7a;
 }
 
 .cell-dot {
@@ -171,7 +171,7 @@
 .legend-item {
   display: flex;
   align-items: center;
-  color: #60706b;
+  color: #9b826c;
   font-size: 21rpx;
 }
 
@@ -191,7 +191,7 @@
 
 .tip {
   padding: 24rpx 10rpx;
-  color: #8a9692;
+  color: #a18b77;
   font-size: 21rpx;
   line-height: 1.6;
   text-align: center;

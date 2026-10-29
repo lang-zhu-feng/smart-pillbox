@@ -1,7 +1,7 @@
 page {
   min-height: 100%;
-  background: #f4f7f6;
-  color: #1d2b27;
+  background: #fffaf3;
+  color: #4d3c33;
   font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
 }
 
@@ -17,7 +17,7 @@ view, text, button {
   background: #ffffff;
   border-radius: 28rpx;
   padding: 28rpx;
-  box-shadow: 0 10rpx 32rpx rgba(36, 73, 63, 0.06);
+  box-shadow: 0 10rpx 32rpx rgba(116, 77, 53, 0.06);
   margin-bottom: 24rpx;
 }
 
@@ -34,12 +34,12 @@ view, text, button {
 }
 
 .section-title .more {
-  color: #167a67;
+  color: #b86c50;
   font-size: 25rpx;
 }
 
 .muted {
-  color: #8a9692;
+  color: #a18b77;
 }
 
 .primary-btn,
@@ -55,12 +55,12 @@ view, text, button {
 
 .primary-btn {
   color: #ffffff;
-  background: #167a67;
+  background: #b86c50;
 }
 
 .secondary-btn {
-  color: #167a67;
-  background: #e9f5f1;
+  color: #b86c50;
+  background: #f4e6d8;
 }
 
 .danger-btn {
@@ -85,8 +85,8 @@ button::after {
 }
 
 .status-completed {
-  color: #15745f;
-  background: #e5f5ef;
+  color: #7d8569;
+  background: #e9ecdf;
 }
 
 .status-reminding {
@@ -95,8 +95,8 @@ button::after {
 }
 
 .status-pending {
-  color: #49615a;
-  background: #edf2f0;
+  color: #9b826c;
+  background: #f0e8dd;
 }
 
 .status-overdue {
@@ -105,11 +105,13 @@ button::after {
 }
 
 .status-none {
-  color: #9aa3a0;
-  background: #f2f4f3;
+  color: #ad9985;
+  background: #f4f0e9;
 }
 
 .status-offline {
   color: #6c7280;
   background: #eceef3;
 }
+
+.form-field{margin:22rpx 0}.form-field>text{display:block;color:#a18b77;font-size:23rpx;margin-bottom:12rpx}.form-field input,.picker-input{font-size:25rpx;padding:20rpx 22rpx;background:#fffaf3;border:1rpx solid #eadfd3;border-radius:18rpx;min-height:76rpx;height:auto}.form-field input{box-sizing:border-box}.form-error,.connection-error{font-size:22rpx;color:#b65d56;line-height:1.8;margin:16rpx 0}.connection-error{background:#f7e4db;padding:18rpx;border-radius:15rpx}.days-row{display:flex;flex-wrap:wrap;gap:16rpx}.days-row label{font-size:22rpx;display:flex;align-items:center}.days-row checkbox{transform:scale(.75)}.plan-form,.profile-form{margin-top:25rpx}.plan-form .primary-btn,.profile-form .primary-btn{width:100%}.status-tag{height:auto;min-height:48rpx;text-align:center}.info-row text:last-child{max-width:65%;text-align:right;word-break:break-all}.device-stats text{word-break:break-all}.form-note{font-size:22rpx;color:#a18b77;line-height:1.8;padding:20rpx 0}

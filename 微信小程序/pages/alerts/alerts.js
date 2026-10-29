@@ -1,51 +1,17 @@
 const store = require('../../utils/store')
-
-Page({
-  data: {
-    alerts: [],
-    unreadCount: 0
-  },
-
-  onShow() {
-    this.refresh()
-  },
-
-  refresh() {
-    const alerts = store.loadState().alerts.map((alert) => ({
-      ...alert,
-      levelLabel: alert.level === 'high' ? '需关注' : '设备消息'
-    }))
-    this.setData({
-      alerts,
-      unreadCount: alerts.filter((alert) => !alert.read).length
-    })
-  },
-
-  openAlert(event) {
-    const id = event.currentTarget.dataset.id
-    const alert = this.data.alerts.find((item) => item.id === id)
+Page(store.page({
+  data: { alerts: [], unreadCount: 0 },
+  applyState(state) { this._state = state; this.setData({ alerts: state.alerts.map(a => ({ ...a, levelLabel: store.sourceLabel(a.source) })), unreadCount: state.alerts.filter(a => !a.read).length }) },
+  async openAlert(event) {
+    const alert = this.data.alerts.find(a => a.id === event.currentTarget.dataset.id)
     if (!alert) return
-    store.markAlertRead(id)
-    wx.showModal({
-      title: alert.title,
-      content: `${alert.detail}\n\n提示：请先通过电话或其他方式联系老人确认实际情况。`,
-      showCancel: false,
-      confirmText: '我知道了'
-    })
-    this.refresh()
+    await store.run(this, () => store.request('/api/alerts/' + alert.id + '/read', 'POST'), '')
+    wx.showModal({ title: alert.title, content: alert.detail + '\n\n请先联系家人确认实际情况。', showCancel: false })
   },
-
-  markAllRead() {
-    store.markAllAlertsRead()
-    wx.showToast({ title: '已全部标记为已读', icon: 'none' })
-    this.refresh()
-  },
-
+  markAllRead() { store.run(this, () => store.request('/api/alerts/read-all', 'POST'), '已全部标记为已读') },
   simulateAlert() {
-    const state = store.loadState()
-    const candidate = state.tasks.find((task) => task.status === 'REMINDING' || task.status === 'PENDING')
-    store.simulateOverdue(candidate ? candidate.id : '')
-    wx.showToast({ title: '异常提醒已生成', icon: 'none' })
-    this.refresh()
+    const task = this._state && this._state.tasks.find(t => !['NO_MEDICATION', 'COMPLETED'].includes(t.status))
+    if (!task) { store.error('请先新增或启用计划'); return }
+    store.run(this, () => store.request('/api/demo/tasks/' + task.id + '/overdue', 'POST'), '已生成应用内提醒')
   }
-})
+}))

@@ -2,7 +2,7 @@
   padding: 28rpx;
   border-radius: 26rpx;
   color: #ffffff;
-  background: linear-gradient(135deg, #4a6570, #718b91);
+  background: linear-gradient(135deg, #a97e61, #c7a283);
 }
 
 .head-title {
@@ -25,14 +25,14 @@
 .filter-chip {
   padding: 14rpx 26rpx;
   border-radius: 24rpx;
-  color: #6f7e79;
-  background: #e8edeb;
+  color: #9d8875;
+  background: #eee3d6;
   font-size: 23rpx;
 }
 
 .filter-chip.active {
   color: #ffffff;
-  background: #167a67;
+  background: #b86c50;
 }
 
 .record-card {
@@ -41,7 +41,7 @@
   padding: 26rpx;
   border-radius: 24rpx;
   background: #ffffff;
-  box-shadow: 0 8rpx 26rpx rgba(36, 73, 63, 0.05);
+  box-shadow: 0 8rpx 26rpx rgba(116, 77, 53, 0.05);
 }
 
 .record-icon {
@@ -71,19 +71,19 @@
 
 .record-medicine {
   margin-top: 12rpx;
-  color: #4f605b;
+  color: #816953;
   font-size: 24rpx;
 }
 
 .record-event {
   margin-top: 8rpx;
-  color: #8a9692;
+  color: #a18b77;
   font-size: 21rpx;
 }
 
 .empty {
   padding: 80rpx 0;
-  color: #9aa3a0;
+  color: #ad9985;
   font-size: 24rpx;
   text-align: center;
 }
@@ -92,8 +92,8 @@
   margin-top: 24rpx;
   padding: 24rpx;
   border-radius: 20rpx;
-  color: #66736f;
-  background: #eaf0ee;
+  color: #9b826c;
+  background: #f2e6d8;
   font-size: 22rpx;
   line-height: 1.65;
 }
