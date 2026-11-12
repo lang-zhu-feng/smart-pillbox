@@ -1,3 +1,4 @@
 .device-hero{background:#f2e2cf;padding:35rpx;border-radius:32rpx;margin-bottom:28rpx}.device-title{font-size:38rpx;font-weight:600}.device-sub{font-size:23rpx;color:#a18b77;margin-top:18rpx;line-height:1.8}.detail-row{display:flex;justify-content:space-between;gap:20rpx;padding:24rpx 0;border-bottom:1rpx solid #eadfd3;font-size:23rpx}.detail-row text:first-child{color:#a18b77;flex-shrink:0}.detail-row text:last-child{text-align:right;word-break:break-all}.code{font-size:22rpx;background:#f5e9db;color:#947259;padding:24rpx;border-radius:16rpx;line-height:2;word-break:break-all}.device-note{font-size:22rpx;color:#a18b77;line-height:1.85;margin:20rpx 0}.primary-btn,.secondary-btn{width:100%}
 
 .auth-title,.auth-privacy,.code{display:block;white-space:pre-line}
+.setup-title{font-size:29rpx;font-weight:700;color:#5a4031}

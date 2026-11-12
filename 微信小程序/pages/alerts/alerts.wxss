@@ -34,6 +34,53 @@
   opacity: 0.78;
 }
 
+.wechat-reminder-card {
+  margin-top: 24rpx;
+  padding: 28rpx;
+  border-radius: 24rpx;
+  background: #ffffff;
+}
+
+.wechat-reminder-title {
+  color: #654c3e;
+  font-size: 29rpx;
+  font-weight: 700;
+}
+
+.wechat-reminder-description,
+.wechat-reminder-status,
+.wechat-reminder-delivery,
+.wechat-reminder-note,
+.wechat-reminder-error {
+  margin-top: 14rpx;
+  font-size: 24rpx;
+  line-height: 1.65;
+  overflow-wrap: break-word;
+}
+
+.wechat-reminder-description,
+.wechat-reminder-status {
+  color: #7c6557;
+}
+
+.wechat-reminder-button {
+  margin-top: 22rpx;
+  color: #ffffff;
+  background: #a86246;
+  border-radius: 16rpx;
+  font-size: 26rpx;
+}
+
+.wechat-reminder-error {
+  color: #ad4439;
+}
+
+.wechat-reminder-delivery,
+.wechat-reminder-note {
+  color: #937e70;
+  font-size: 22rpx;
+}
+
 .toolbar {
   display: flex;
   align-items: center;
@@ -160,3 +207,4 @@
   color: #95620e;
   font-size: 20rpx;
 }
+.confirm-reminder-btn { width: 100%; margin-bottom: 20rpx; }

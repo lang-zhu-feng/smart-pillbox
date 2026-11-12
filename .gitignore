@@ -22,6 +22,12 @@ build/
 .idea/
 .vscode/
 project.private.config.json
+/.workbuddy/
+
+# Locally installed Arduino IDE and vendor drivers are not project source
+/硬件/Arduino IDE/
+/硬件/驱动/*
+!/硬件/驱动/.gitkeep
 
 # Local configuration and private keys; keep safe example configurations
 .env

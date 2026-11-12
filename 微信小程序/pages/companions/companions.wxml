@@ -1,0 +1,38 @@
+<view class="page support-page">
+  <view class="support-title">同药话题 · 药友</view>
+  <view class="form-note">由家属协助、参与者本人自愿开启。共同药名只是交流话题，不代表病情相同或用法相同。</view>
+  <view class="connection-error" wx:if="{{connectionError}}">{{connectionError}}<button bindtap="refresh">重新加载</button></view>
+  <view class="form-note" wx:if="{{loading}}">正在加载…</view>
+  <view class="card" wx:if="{{!loading}}">
+    <view class="support-heading">{{profile.enabled ? '已开启自愿交流' : '默认关闭 · 由你决定'}}</view>
+    <text class="support-copy" wx:if="{{profile.enabled}}">昵称：{{profile.alias}}
+共同话题：{{names[selectedIndex]}}
+{{profile.about}}</text>
+    <view class="form-note">开启后，仅向自愿选择相同药名的账号展示昵称、自我介绍和所选药名。家庭姓名、电话、地址、病史及完整药单不随推荐展示。请勿在昵称、介绍或聊天中填写敏感资料。</view>
+    <button class="secondary-btn" bindtap="editProfile">{{formOpen ? '取消编辑' : profile.enabled ? '修改交流设置' : '自愿开启药友交流'}}</button>
+    <button class="danger-btn" wx:if="{{profile.enabled}}" bindtap="disable">关闭交流并结束药友关系</button>
+    <form wx:if="{{formOpen}}" bindsubmit="saveProfile">
+      <view class="form-field"><text>交流昵称（不使用真实姓名）</text><input name="alias" value="{{profile.alias}}" maxlength="24"/></view>
+      <view class="form-field"><text>自我介绍（可选，不填写病史和联系方式）</text><textarea name="about" value="{{profile.about}}" maxlength="120" auto-height/></view>
+      <view class="form-field"><text>自愿公开的一项用药话题</text><picker range="{{names}}" value="{{selectedIndex}}" bindchange="selectMedicine"><view class="picker-input">{{names[selectedIndex] || '请先添加并启用用药计划'}}　›</view></picker></view>
+      <checkbox-group name="consent"><label class="choice"><checkbox value="yes" color="#B86C50"/><text>参与者本人已同意展示上述昵称、介绍和所选药名，并了解双方接受邀请后可在应用内交流。家属代操作也已征得本人同意。</text></label></checkbox-group>
+      <view class="form-note">更换所选药名会结束原有邀请和药友关系。暂停所选用药计划后也会关闭交流，恢复计划不会自动恢复关系。</view>
+      <button class="primary-btn" form-type="submit" disabled="{{!eligibleMedicines.length}}">同意并保存</button>
+    </form>
+  </view>
+  <block wx:if="{{profile.enabled}}">
+    <view class="section-title"><view class="title">新的药友邀请</view></view>
+    <view class="support-empty" wx:if="{{!requests.length}}">暂无待处理邀请。</view>
+    <view class="card" wx:for="{{requests}}" wx:key="id"><view class="support-heading">{{item.alias}} · {{item.direction === 'sent' ? '等待对方接受' : '邀请你交流'}}</view><text class="support-copy">共同话题：{{item.medicine}}
+{{item.about}}</text><view class="support-actions"><button class="secondary-btn" wx:if="{{item.direction === 'received'}}" data-id="{{item.id}}" data-action="accept" bindtap="decide">接受</button><button class="secondary-btn" wx:if="{{item.direction === 'received'}}" data-id="{{item.id}}" data-action="decline" bindtap="decide">拒绝</button><button class="secondary-btn" wx:if="{{item.direction === 'sent'}}" data-id="{{item.id}}" data-action="cancel" bindtap="decide">撤回</button></view></view>
+    <view class="section-title"><view class="title">我的药友</view></view>
+    <view class="support-empty" wx:if="{{!connections.length}}">双方接受邀请后，会显示在这里。</view>
+    <view class="card" wx:for="{{connections}}" wx:key="id"><view class="support-heading">{{item.alias}}</view><text class="support-copy">共同话题：{{item.medicine}}</text><view class="support-actions"><button class="secondary-btn" data-id="{{item.id}}" data-alias="{{item.alias}}" bindtap="openChat">聊一聊</button><button class="secondary-btn" data-id="{{item.id}}" data-action="disconnect" bindtap="decide">结束关系</button></view></view>
+    <view class="card" wx:if="{{chatId}}"><view class="support-heading">与 {{chatAlias}} 交流</view><view class="form-note">展示最近 100 条消息，每 8 秒刷新。交流生活与陪伴话题，不照搬他人药物和剂量。</view><view class="chat-message {{item.mine ? 'mine' : ''}}" wx:for="{{messages}}" wx:key="id"><view class="chat-time">{{item.mine ? '我' : chatAlias}} · {{item.timeLabel}}</view><text class="support-copy">{{item.content}}</text></view><view class="support-empty" wx:if="{{!messages.length}}">还没有消息，可以先打个招呼。</view><textarea value="{{draft}}" maxlength="500" bindinput="typeMessage" placeholder="写一句问候（最多 500 字）" auto-height/><button class="primary-btn" bindtap="sendMessage">发送</button><button class="secondary-btn" bindtap="closeChat">收起聊天</button></view>
+    <view class="section-title"><view class="title">相同药名 · 自愿认识</view></view>
+    <view class="support-empty" wx:if="{{!candidates.length}}">暂时没有可邀请的人。只有双方自愿开启且选择相同药名时才会展示；不会编造药友。</view>
+    <view class="card" wx:for="{{candidates}}" wx:key="id"><view class="support-heading">{{item.alias}}</view><text class="support-copy">共同话题：{{item.medicine}}
+{{item.about || '对方暂未填写介绍'}}</text><button class="secondary-btn" data-id="{{item.id}}" bindtap="invite">发送药友邀请</button></view>
+  </block>
+  <view class="form-note">仅按填写药名做文字匹配，不识别疾病，不判断两种药可以替换。不同规格、厂家请在计划名称中区分。演示账号与独立家庭不互相推荐。邀请和聊天保存在本地服务数据库；关闭交流后保留历史但不再提供聊天访问，重新邀请会建立新会话。</view>
+</view>

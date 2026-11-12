@@ -3,7 +3,7 @@ const connection = require('./connection')
 const TOKEN = 'medguard.session.v2'
 const days = ['周一', '周二', '周三', '周四', '周五', '周六', '周日']
 const slots = [{ key: 'morning', name: '早', fullName: '早餐后', time: '08:00' }, { key: 'noon', name: '中', fullName: '午餐后', time: '12:00' }, { key: 'evening', name: '晚', fullName: '晚餐后', time: '19:00' }]
-const statusMeta = { PENDING: { label: '待开盒', className: 'status-pending' }, REMINDING: { label: '提醒中', className: 'status-reminding' }, COMPLETED: { label: '已开盒', className: 'status-completed' }, OVERDUE: { label: '待确认', className: 'status-overdue' }, NO_MEDICATION: { label: '无计划', className: 'status-none' } }
+const statusMeta = { PENDING: { label: '待开盒', className: 'status-pending' }, REMINDING: { label: '提醒中', className: 'status-reminding' }, COMPLETED: { label: '已开盒', className: 'status-completed' }, CONFIRMED: { label: '家属已确认', className: 'status-confirmed' }, OVERDUE: { label: '待确认', className: 'status-overdue' }, NO_MEDICATION: { label: '无计划', className: 'status-none' } }
 let redirecting = false
 function readStorage(key) { try { return wx.getStorageSync(key) || '' } catch (_) { return '' } }
 let sessionToken = readStorage(TOKEN)
@@ -93,7 +93,7 @@ async function run(owner, operation, title = '已保存') {
   catch (e) { error(e) }
   finally { owner._acting = false }
 }
-function deviceLabel(device) { return device.online ? '设备在线' : device.hasConnected ? '设备离线' : '尚未接入硬件' }
+function deviceLabel(device) { return device.hasConnected ? '曾接入硬件' : '尚未接入硬件' }
 function mondayIndex(date) { return (date.getDay() + 6) % 7 }
-function sourceLabel(source) { return source === 'hardware' ? '真实设备' : source === 'demo' ? '软件模拟' : '时间规则' }
+function sourceLabel(source) { return source === 'hardware' ? '真实设备' : source === 'family' ? '家属确认' : source === 'demo' ? '软件模拟' : '时间规则' }
 module.exports = { days, slots, statusMeta, request, page, run, error, getToken, clearToken, setSession, requireLogin, baseURL, setBaseURL, isRealDevice, deviceLabel, mondayIndex, sourceLabel }

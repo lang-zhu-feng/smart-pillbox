@@ -50,10 +50,18 @@
 
   <view class="legend card">
     <view class="legend-item"><text class="legend-dot status-completed"></text>已完成</view>
+    <view class="legend-item"><text class="legend-dot status-confirmed"></text>家属已确认</view>
     <view class="legend-item"><text class="legend-dot status-reminding"></text>提醒中</view>
     <view class="legend-item"><text class="legend-dot status-pending"></text>待服药</view>
     <view class="legend-item"><text class="legend-dot status-overdue"></text>已逾期</view>
     <view class="legend-item"><text class="legend-dot status-none"></text>无需服药</view>
+  </view>
+
+  <view class="card confirm-card" wx:if="{{showConfirmCard}}">
+    <view class="confirm-title">今日早药格 · {{todayEarly.status === 'CONFIRMED' ? '本次已确认' : '家属确认'}}</view>
+    <view class="confirm-note">{{todayEarly.status === 'CONFIRMED' ? '本次不再响铃，也不会生成新的未开盒通知。' : '若已联系家人并确认情况，可停止本次反复响铃。'}}</view>
+    <button class="secondary-btn" bindtap="confirmTask" disabled="{{!canConfirm}}">{{todayEarly.status === 'CONFIRMED' ? '本次已确认' : '家属确认，停止本次提醒'}}</button>
+    <view class="confirm-note">家属确认不等于药盒开过，也不等于已经服药。</view>
   </view>
 
   <button class="danger-btn" bindtap="simulateOverdue">模拟一次“超时未开盒”</button>

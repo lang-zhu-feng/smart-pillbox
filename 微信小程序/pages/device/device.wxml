@@ -1,4 +1,29 @@
-<view class="page"><view class="connection-error" wx:if="{{connectionError}}">{{connectionError}}</view><view class="device-hero"><view class="device-title">把药盒连回家</view><view class="device-sub">硬件还在准备，也可以先把软件用起来。</view></view><view class="card"><view class="detail-row"><text>当前状态</text><text>{{deviceLabel}}</text></view><view class="detail-row"><text>设备编号</text><text selectable>{{device.code}}</text></view><view class="detail-row"><text>最后通信</text><text>{{device.lastHardwareSeen || '等待首次心跳'}}</text></view><view class="detail-row"><text>电量</text><text>{{device.battery == null ? '等待设备上报' : device.battery + '%'}}</text></view></view><view class="card"><text class="code" selectable>GET /api/device/schedule
-POST /api/device/heartbeat
-POST /api/device/events</text><view class="device-note">每 30 秒上报心跳，超过 90 秒无通信显示离线。软件模拟不会改变真实设备状态。设备使用独立密钥，与家属登录分开。</view><view class="device-note">当前服务：{{baseURL}}
-真机联调：运行局域网启动脚本，在登录页连接设置中填写电脑局域网地址。</view></view><button class="primary-btn" bindtap="generateKey">生成 / 更换设备接入密钥</button><view class="card" wx:if="{{deviceToken}}"><view class="device-note">仅显示一次，请妥善保存。离开本页后清除显示。</view><text class="code" selectable>{{deviceToken}}</text><button class="secondary-btn" bindtap="copyKey">复制密钥</button></view><view class="device-note">硬件上传事件时携带唯一 eventId 和带时区的 occurredAt。网络重试不会重复记录。详细协议见项目文档。</view></view>
+<view class="page">
+  <view class="connection-error" wx:if="{{connectionError}}">{{connectionError}}</view>
+  <view class="device-hero">
+    <view class="device-title">把药盒连回家</view>
+    <view class="device-sub">联网后，药盒读取这户家庭的计划，并上传真实开盒记录。</view>
+  </view>
+  <view class="card">
+    <view class="detail-row"><text>设备记录</text><text>{{deviceLabel}}</text></view>
+    <view class="detail-row"><text>设备编号</text><text selectable>{{device.code}}</text></view>
+    <view class="detail-row"><text>接入密钥</text><text>{{keyStatus}}</text></view>
+    <view class="detail-row"><text>最后开盒上传</text><text>{{device.lastHardwareSeen || '暂无真实开盒记录'}}</text></view>
+    <view class="detail-row"><text>电量</text><text>{{device.battery == null ? '等待设备上报' : device.battery + '%'}}</text></view>
+  </view>
+  <view class="card">
+    <view class="setup-title">如何绑定这只药盒</view>
+    <view class="device-note">1. 电脑启动局域网后端；手机与 ESP32 连接同一网络。电脑地址不能是 127.0.0.1。</view>
+    <view class="device-note">2. 记下上面的设备编号，点击下面按钮生成专用密钥。已有密钥且设备正常工作时，不要重新生成。</view>
+    <view class="device-note">3. 电脑打开 ESP32 的 115200 串口，发送 server http://电脑局域网IP:8766，再发送 bind 设备编号 密钥。串口输入不带尖括号。</view>
+    <view class="device-note">4. 串口发送 ?，确认 Schedule OK。首次真实开盒上传后，上方才显示“曾接入硬件”。</view>
+    <view class="device-note">当前小程序服务：{{baseURL}}。药盒必须填写电脑可访问的局域网地址。</view>
+  </view>
+  <button class="primary-btn" bindtap="generateKey">生成 / 更换设备接入密钥</button>
+  <view class="card" wx:if="{{deviceToken}}">
+    <view class="device-note">下面整行是串口绑定命令；只用最新生成的密钥，不要加 Bearer。离开页面后密钥隐藏，勿发给他人。</view>
+    <text class="code" selectable>bind {{device.code}} {{deviceToken}}</text>
+    <button class="secondary-btn" bindtap="copyBindCommand">复制绑定命令</button>
+  </view>
+  <view class="device-note">设备只读取计划、上传真实开盒；无需心跳。一个门磁默认对应早药格，可在固件配置中改时段。开盒不等于已经服药。</view>
+</view>

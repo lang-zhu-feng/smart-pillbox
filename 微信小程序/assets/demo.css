@@ -15,3 +15,9 @@
 .home-story .home-scene{max-height:200px;object-fit:cover;object-position:bottom}
 @media(min-width:1100px) and (max-height:940px){.home-story .home-scene{max-height:165px}}
 @media(max-width:850px){.home-story .home-scene{max-height:180px}}
+
+/* Medicine notes and voluntary companions, matching the existing warm palette. */
+.confirmed{background:#e3f1ee;color:#517a77}
+#support-root .card{margin-top:18px}#support-root .card h3{font-size:17px;margin:4px 0 12px}#support-root .support-label{display:block;font-size:13px!important;color:#987c67;margin:18px 0 8px!important}#support-root .support-copy{white-space:pre-wrap;overflow-wrap:anywhere;font-size:14px;line-height:1.85;margin:8px 0 14px}#support-root select,#support-root textarea{width:100%;font:inherit;border:1px solid #eadfd3;border-radius:12px;background:#fffaf3;padding:12px;color:#4d3c33}#support-root textarea{min-height:100px;resize:vertical}#support-root .secondary-btn{margin:12px 0}#support-root .support-actions{display:flex;gap:10px;flex-wrap:wrap}#support-root .support-actions button{flex:1}#support-root .support-consent{display:flex;align-items:flex-start;gap:9px;font-size:13px;line-height:1.8}#support-root .support-consent input{margin-top:5px;flex-shrink:0}#support-root .support-notice{background:#fff0ed;color:#a25243;border-radius:14px;padding:16px;font-size:13px;line-height:1.85}#support-root .support-message{border-radius:14px;padding:12px 14px;background:#f4eee7;margin:12px 0}#support-root .support-message.mine{background:#f3dfd1}#support-root .support-message small{color:#987c67;font-size:11px}#support-root .support-message p{margin-bottom:0}#support-root a{color:#b86c50;font-size:12px;overflow-wrap:anywhere}
+
+.plan-delete{display:block;margin:14px 0 0 auto;border:0;background:transparent;color:var(--red);font-size:11px;padding:7px 0}

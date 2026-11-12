@@ -8,6 +8,7 @@
     <view class="plan-count">{{plans.length}}<text>项</text></view>
   </view>
 
+  <button class="secondary-btn" bindtap="goMedicines">药品介绍 · 储存与取药提示</button>
   <view class="section-title">
     <view class="title">计划列表</view>
     <view class="more">一位老人</view>
@@ -39,21 +40,27 @@
           <text>{{item.enabled ? '药盒将正常提醒' : '该计划已暂停'}}</text>
         </view>
       </view>
+      <view class="plan-actions">
+        <button class="edit-plan-btn" size="mini" data-id="{{item.id}}" bindtap="editPlan">修改计划与提醒时间</button>
+        <button class="delete-plan-btn" size="mini" data-id="{{item.id}}" bindtap="deletePlan">删除计划</button>
+      </view>
     </view>
   </view>
 
-  <button class="primary-btn add-btn" bindtap="addPlan">{{formOpen ? '收起表单' : '＋ 新增计划'}}</button>
+  <button class="primary-btn add-btn" bindtap="addPlan">＋ 新增计划</button>
   <form class="card plan-form" wx:if="{{formOpen}}" bindsubmit="savePlan">
-    <view class="form-field"><text>药品名称</text><input name="medicine" maxlength="60" placeholder="请按医嘱填写"/></view>
-    <view class="form-field"><text>每次剂量</text><input name="dosage" maxlength="40" placeholder="按医嘱填写剂量"/></view>
+    <view class="form-title">{{editingId ? '修改计划' : '新增计划'}}</view>
+    <view class="form-field"><text>药品名称</text><input name="medicine" value="{{formValues.medicine}}" maxlength="60" placeholder="请按医嘱填写"/></view>
+    <view class="form-field"><text>每次剂量</text><input name="dosage" value="{{formValues.dosage}}" maxlength="40" placeholder="按医嘱填写剂量"/></view>
     <view class="form-field"><text>药格时段</text><picker range="{{slots}}" value="{{slotIndex}}" bindchange="changeSlot"><view class="picker-input">{{slots[slotIndex]}} ›</view></picker></view>
     <view class="form-field"><text>提醒时间</text><picker mode="time" value="{{time}}" bindchange="changeTime"><view class="picker-input">{{time}} ›</view></picker></view>
-    <view class="form-field"><text>重复星期</text><checkbox-group name="days" class="days-row"><label wx:for="{{days}}" wx:key="value"><checkbox value="{{item.value}}" checked color="#B86C50"/>{{item.name}}</label></checkbox-group></view>
-    <view class="form-field"><text>备注</text><input name="note" maxlength="160" placeholder="可选"/></view>
+    <view class="form-field"><text>重复星期</text><checkbox-group name="days" class="days-row"><label wx:for="{{days}}" wx:key="value"><checkbox value="{{item.value}}" checked="{{item.checked}}" color="#B86C50"/>{{item.name}}</label></checkbox-group></view>
+    <view class="form-field"><text>备注</text><input name="note" value="{{formValues.note}}" maxlength="160" placeholder="可选"/></view>
     <button class="primary-btn" form-type="submit">保存计划</button>
+    <button class="secondary-btn" bindtap="closeForm">取消</button>
   </form>
 
   <view class="form-note">
-    同一药格内多项计划需要相同提醒时间。示例药品仅供演示；真实用药安排请遵医嘱。
+    药盒联网后会读取修改后的提醒时间。早药格到点响三声；未开盒且家属未确认时，此后每 10 分钟响 5 秒；开始后 45 分钟仍未处理则响 15 秒并通知家属。目前只有早药格有门磁，其他时段不发送设备未开盒通知。同一药格内多项计划需要相同提醒时间；真实用药安排请遵医嘱。
   </view>
 </view>

@@ -4,14 +4,28 @@
     <view class="overview-icon">!</view>
     <view class="overview-copy">
       <view class="overview-title">{{unreadCount ? unreadCount + ' 条提醒待查看' : '当前没有未读提醒'}}</view>
-      <view class="overview-sub">应用内提醒，尚未接入微信订阅消息或短信</view>
+      <view class="overview-sub">未收到开盒记录时，提醒家属联系确认</view>
     </view>
+  </view>
+
+  <view class="wechat-reminder-card">
+    <view class="wechat-reminder-title">微信提醒</view>
+    <view class="wechat-reminder-description">允许订阅后，超时未收到开盒记录时，可通过微信服务通知提醒你，关闭小程序也能接收。</view>
+    <view class="wechat-reminder-status" wx:if="{{!wechat.available}}">{{wechat.unavailableReason}}</view>
+    <view class="wechat-reminder-status" wx:elif="{{wechat.authorizedCredits > 0}}">已记录订阅授权。后续可接收的提醒以微信授权规则为准。</view>
+    <view class="wechat-reminder-status" wx:else>请主动允许订阅，才能接收微信提醒。</view>
+    <button class="wechat-reminder-button" bindtap="enableWechatNotifications" loading="{{wechatBusy}}" disabled="{{wechatBusy || !wechat.available}}">{{wechat.authorizedCredits > 0 ? '补充提醒授权' : '开启微信提醒'}}</button>
+    <view class="wechat-reminder-error" wx:if="{{wechatError}}">{{wechatError}}</view>
+    <view class="wechat-reminder-delivery" wx:if="{{wechat.lastDeliveryMessage}}">{{wechat.lastDeliveryMessage}}</view>
+    <view class="wechat-reminder-note">一次授权不代表永久开启。未允许订阅时，小程序内的提醒记录仍会保留。</view>
   </view>
 
   <view class="toolbar">
     <view class="toolbar-title">消息记录</view>
     <view class="toolbar-action" bindtap="markAllRead">全部已读</view>
   </view>
+
+  <button class="secondary-btn confirm-reminder-btn" wx:if="{{canConfirm}}" bindtap="confirmTask">家属确认，停止早药格本次提醒</button>
 
   <view
     class="alert-card {{item.read ? 'read' : 'unread'}} {{item.level === 'high' ? 'high' : 'info'}}"
@@ -40,7 +54,7 @@
   <view class="safety-card">
     <view class="safety-title">处理措施</view>
     <view>1. 先联系老人确认实际情况；</view>
-    <view>2. 检查药盒是否断电或离线；</view>
+    <view>2. 检查药盒供电与网络连接；</view>
     <view>3. 多次联系未果，可联系社区联络员协助上门查看；</view>
     <view>4. 如老人身体不适，请及时联系专业医疗人员。</view>
     <view class="safety-note">社区联系人信息需由项目实际配置，当前 Demo 未填写真实联系方式。</view>

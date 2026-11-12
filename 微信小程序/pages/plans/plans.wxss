@@ -114,6 +114,13 @@
   margin-top: 28rpx;
 }
 
+.plan-actions { display: flex; flex-wrap: wrap; gap: 12rpx; margin-top: 18rpx; }
+.edit-plan-btn, .delete-plan-btn { margin: 0; padding: 0 16rpx; border: 0; font-size: 22rpx; }
+.edit-plan-btn { color: #b86c50; background: #f8eee4; }
+.delete-plan-btn { color: #b65d56; background: #f9ece9; }
+.edit-plan-btn::after, .delete-plan-btn::after { border: 0; }
+.form-title { margin-bottom: 16rpx; font-size: 30rpx; font-weight: 700; }
+
 .form-note {
   padding: 24rpx 8rpx;
   color: #a18b77;

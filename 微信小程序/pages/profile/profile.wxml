@@ -38,6 +38,8 @@
   </view>
 
   <view class="menu-card">
+    <view class="menu-item" bindtap="goMedicines"><view>药品介绍与储存</view><text>查看 ›</text></view>
+    <view class="menu-item" bindtap="goCompanions"><view>同药话题 · 自愿药友</view><text>认识朋友 ›</text></view>
     <view class="menu-item" bindtap="goDevice"><view>硬件接入与设备设置</view><text>接入入口 ›</text></view>
     <view class="menu-item" bindtap="editProfile"><view>编辑家庭档案</view><text>编辑 ›</text></view>
     <view class="menu-item" bindtap="goHistory">
@@ -58,7 +60,7 @@
     <button class="primary-btn" form-type="submit">保存家庭档案</button>
   </form>
 
-  <button class="secondary-btn reset-btn" bindtap="resetDemo">重置全部演示数据</button>
+  <button class="secondary-btn reset-btn" bindtap="resetDemo">重置今天的演示记录</button>
 
   <view class="version">安心药伴 v0.2 · {{isDemo ? '演示家庭' : '独立家庭账号'}}
 开盒不等于已服药</view>

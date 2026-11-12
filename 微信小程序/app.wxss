@@ -89,6 +89,11 @@ button::after {
   background: #e9ecdf;
 }
 
+.status-confirmed {
+  color: #517a77;
+  background: #e3f1ee;
+}
+
 .status-reminding {
   color: #9a6505;
   background: #fff2cf;

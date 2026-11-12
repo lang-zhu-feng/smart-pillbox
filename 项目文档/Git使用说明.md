@@ -1,67 +1,36 @@
-# 智慧城市项目 Git 使用说明
+# GitHub 作品集发布与日常更新
 
-仓库位置：`E:\学校课程\智慧城市`。Git 统一记录后端、小程序、硬件程序、数据库结构脚本和项目文档的变化。
+下面的命令在**仓库根目录**的 PowerShell 执行。此仓库已配置 `origin` 远程地址；在其他电脑克隆后可用 `git remote -v` 核对。提交和推送是两步：`commit` 保存在本机，`push` 才上传到 GitHub。
 
-当前采用本地版本管理，默认分支为 `main`。以后连接 GitHub 时，可以保留已有提交历史。
-
-## 打开项目终端
-
-在 PowerShell 中进入项目目录：
+## 发布前先检查
 
 ```powershell
-Set-Location -LiteralPath 'E:\学校课程\智慧城市'
+git status --short
+git diff --check
+git ls-files --others --exclude-standard
 ```
 
-也可以在项目文件夹中打开终端。运行 `git status` 可以确认当前状态。
+逐个检查新增文件，特别是 `硬件/` 与 `项目文档/`。不要把 `.env`、`secrets.h`、Wi-Fi 密码、设备密钥、微信 AppSecret、SQLite 数据库、真实患者资料、日志、Arduino IDE 安装目录或个人工作笔记提交。`.gitignore` 只防止**新的、未跟踪的**文件误入；如果文件以前已经提交，仍须单独检查 Git 历史。
 
-## 保存一个版本
+本仓库的 `公网扫码演示/` 是独立演示快照，启动脚本带本机路径；上传源码不会让临时二维码继续有效，也不会自动托管后端。简历中可以展示代码与截图，不能把临时链接描述为长期在线服务。
 
-完成一个小功能并检查运行结果后，依次运行：
+## 保存并上传
+
+先用 `git status --short` 确认每项变更。对要公开的目录和文件逐项暂存，避免直接把尚未检查的所有内容加入：
 
 ```powershell
-git status
-git diff
-git add --all
-git diff --cached --stat
-git commit -m "说明本次完成的功能"
+git add README.md .gitignore backend 微信小程序 测试代码 硬件/联调
+git add 项目文档/PROJECT_BRIEF.md 项目文档/系统流程图设计.md 项目文档/小程序联动交付说明.md 项目文档/硬件接入说明.md 项目文档/微信家属通知接入.md 项目文档/全部硬件接线表.md 项目文档/Git使用说明.md
+git diff --cached --name-status
+git diff --cached --check
+git commit -m "整理智慧药盒公开展示版本"
+git push origin main
 ```
 
-- `git status`：查看哪些文件被新增、修改或删除。
-- `git diff`：查看已跟踪文件中尚未暂存的文字改动；新增文件还需自行打开检查。
-- `git add --all`：把当前改动加入暂存区，准备存成一个版本。
-- `git diff --cached --stat`：核对本次准备保存的文件和改动数量。
-- `git commit`：保存一个带说明的版本；提交说明应换成本次的实际内容。
+上面的暂存范围包含 README 直接引用的核心文档与固件。其他硬件练习、答辩素材、新增草稿及 `公网扫码演示/` 改动，请在确认内容后再分别 `git add`。删除的旧文件也要核对是否是自己希望公开的变化。没有完成检查前不要推送。
 
-只修改文件不会自动产生版本，运行 `git commit` 才会保存提交。Git 也不会自动上传到 GitHub。
+别人要直接浏览仓库，GitHub 仓库必须设为 **Public**；如果保持 Private，则需单独邀请对方并确认其已接受访问。仓库可见性是 GitHub 设置，`git push` 不会自动改变它。改为 Public 前请再次检查文件列表、旧提交历史和媒体资料是否适合公开。
 
-## 配置提交者信息
+## 以后如何维护
 
-第一次提交前需要设置姓名和邮箱。下面两项只作用于当前项目，不修改全局配置。请将示例替换为自己希望记录在提交历史中的信息：
-
-```powershell
-git config --local user.name "你的姓名"
-git config --local user.email "你的邮箱"
-```
-
-后续准备上传 GitHub 时，也可以选择使用 GitHub 提供的隐私邮箱作为提交邮箱。
-
-## 查看已经保存的版本
-
-```powershell
-git log --oneline -10
-git show --stat HEAD
-```
-
-第一条查看最近 10 次提交，第二条查看最新提交的说明和文件变化。尚未创建首次提交时，没有可显示的提交历史。
-
-## 哪些内容不会纳入版本
-
-根目录的 `.gitignore` 已排除 Python 虚拟环境、微信开发者工具安装目录、依赖包、个人开发设置、缓存、日志、环境密钥配置、数据库运行文件与备份。
-
-数据库建表脚本等项目源码可以保存；真实业务数据、数据库密码和访问密钥应保存在忽略目录或本地配置中。安全配置示例可使用 `.env.example`，只填写占位内容。
-
-`.gitkeep` 用于保留暂时为空的数据库、硬件程序和测试代码目录。
-
-## 以后上传 GitHub
-
-之后在 GitHub 创建仓库，再把远程地址关联到本地仓库并推送。现阶段不配置远程地址、不执行上传，也不需要 GitHub 登录。
+每完成一项功能或修复，先跑[根目录 README](../README.md)列出的测试，再查看 `git status --short` 和 `git diff`。按功能暂存、提交、推送；可用 `git log --oneline -5` 查看最近版本。Python 虚拟环境和本机数据库被忽略，新电脑要按 README 重新建立，不能靠 Git 恢复。

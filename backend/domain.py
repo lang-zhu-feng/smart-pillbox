@@ -10,6 +10,9 @@ SLOTS = [
     {'key': 'noon', 'name': '中', 'fullName': '午餐后', 'time': '12:00'},
     {'key': 'evening', 'name': '晚', 'fullName': '晚餐后', 'time': '19:00'},
 ]
+REMINDER_INTERVAL_SECONDS = 600
+REMINDER_MAX_COUNT = 5
+GRACE_SECONDS = 900
 
 def now_local():
     return datetime.now(TZ)
@@ -27,8 +30,8 @@ def seed_state(name, demo=False):
                   'relation': '父亲' if demo else '家人', 'address': '温暖的小家' if demo else '',
                   'conditions': [], 'emergencyContact': '', 'homeTitle': '爸爸的家' if demo else '家人的家'},
         'device': {'name': '家里的安心药盒', 'code': 'MG-' + uuid.uuid4().hex[:8].upper(),
-                   'online': False, 'hasConnected': False, 'lastSeen': '尚未接入',
-                   'lastHardwareSeen': None, 'battery': None},
+                   'hasConnected': False, 'lastSeen': '尚未接入',
+                   'lastHardwareSeen': None, 'battery': None, 'monitoredSlots': ['morning']},
         'plans': plans, 'tasks': [], 'alerts': [], 'history': [],
         'meta': {'isDemo': demo, 'familyName': name, 'weekStart': '', 'updatedAt': '', 'timezone': 'Asia/Shanghai'}
     }
@@ -55,8 +58,9 @@ def rebuild_tasks(state, now):
                     'startAt': start.isoformat(), 'endAt': end.isoformat(),
                     'medicines': [p['medicine'] + ' · ' + p['dosage'] for p in plans],
                     'status': 'PENDING' if plans else 'NO_MEDICATION', 'completedAt': '', 'reminderCount': 0}
-            if plans and old.get('status') == 'COMPLETED':
-                for key in ['status', 'completedAt', 'source', 'eventId']:
+            if plans and (old.get('status') == 'COMPLETED' or
+                          (old.get('status') == 'CONFIRMED' and old.get('startAt') == task['startAt'])):
+                for key in ['status', 'completedAt', 'confirmedAt', 'source', 'eventId']:
                     if key in old:
                         task[key] = old[key]
             elif plans and old.get('demoOverride'):
@@ -70,19 +74,27 @@ def tick(state, now):
         rebuild_tasks(state, now)
     device = state['device']
     last = device.get('lastHardwareSeen')
-    device['online'] = bool(last and 0 <= (now - datetime.fromisoformat(last)).total_seconds() <= 90)
+    # Remove the legacy online flag from persisted states; connection history is not liveness.
+    device.pop('online', None)
+    device.setdefault('monitoredSlots', ['morning'])
     device['lastSeen'] = last[11:19] if last else '尚未接入'
     for task in state['tasks']:
-        if task['status'] in ['NO_MEDICATION', 'COMPLETED'] or task.get('demoOverride'):
+        if task.get('resetSuppressed'):
+            task['status'], task['reminderCount'] = 'PENDING', 0
+            continue
+        if task['status'] in ['NO_MEDICATION', 'COMPLETED', 'CONFIRMED'] or task.get('demoOverride'):
             continue
         start, end = datetime.fromisoformat(task['startAt']), datetime.fromisoformat(task['endAt'])
         if now < start:
             task['status'], task['reminderCount'] = 'PENDING', 0
-        elif now <= end:
-            task['status'], task['reminderCount'] = 'REMINDING', min(3, int((now - start).total_seconds() // 600) + 1)
+        elif now < end + timedelta(seconds=GRACE_SECONDS):
+            task['status'] = 'REMINDING' if now <= end else 'OVERDUE'
+            task['reminderCount'] = min(REMINDER_MAX_COUNT, int((now - start).total_seconds() // REMINDER_INTERVAL_SECONDS) + 1)
         else:
             task['status'] = 'OVERDUE'
-            if task['date'] == now.date().isoformat() and now >= end + timedelta(minutes=15):
+            task['reminderCount'] = REMINDER_MAX_COUNT
+            if (task['date'] == now.date().isoformat()
+                    and (state['meta'].get('isDemo') or task['slotKey'] in device['monitoredSlots'])):
                 add_alert(state, task, now, 'rule')
     state['meta']['updatedAt'] = now.isoformat(timespec='seconds')
 
@@ -112,6 +124,19 @@ def complete(state, task, now, source, event_id):
         'medicine': '、'.join(task['medicines']), 'result': 'COMPLETED',
         'event': ('模拟开盒' if source == 'demo' else '设备开盒') + ' · ' + now.strftime('%H:%M:%S'),
         'source': source, 'deviceCode': state['device']['code'], 'eventId': event_id, 'taskId': task['id']})
+    state['history'] = state['history'][:1000]
+
+def confirm_reminder(state, task, now):
+    if task['status'] == 'CONFIRMED':
+        return
+    task.update(status='CONFIRMED', confirmedAt=now.isoformat(timespec='seconds'), source='family')
+    for alert in state['alerts']:
+        if alert.get('taskKey') == task['date'] + ':' + task['id']:
+            alert['read'] = True
+    state['history'].insert(0, {'id': uuid.uuid4().hex, 'date': task['date'], 'slot': task['slotFullName'],
+        'medicine': '、'.join(task['medicines']), 'result': 'CONFIRMED',
+        'event': '家属确认停止提醒 · ' + now.strftime('%H:%M:%S'), 'source': 'family',
+        'deviceCode': state['device']['code'], 'eventId': 'family-' + uuid.uuid4().hex, 'taskId': task['id']})
     state['history'] = state['history'][:1000]
 
 def public_state(state, now):

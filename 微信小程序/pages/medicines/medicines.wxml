@@ -1,0 +1,29 @@
+<view class="page support-page">
+  <view class="support-title">药品介绍与储存</view>
+  <view class="form-note">按实际说明书记录药品信息，给家人的照料多一份依据。</view>
+  <view class="connection-error" wx:if="{{connectionError}}">{{connectionError}}<button bindtap="refresh">重新加载</button></view>
+  <view wx:if="{{loading}}" class="form-note">正在加载…</view>
+  <view class="card" wx:if="{{current}}">
+    <picker range="{{names}}" value="{{selectedIndex}}" bindchange="selectMedicine"><view class="picker-input">{{names[selectedIndex]}}　›</view></picker>
+    <view class="form-note">{{current.provenance}}。同药名计划共用这份资料；不同规格或厂家请在计划药名中区分。未填写表示资料待补充。</view>
+    <view class="support-label">规格 / 厂家</view><text class="support-copy">{{current.specification || '规格待补充'}} / {{current.manufacturer || '厂家待补充'}}</text>
+    <view class="support-label">药品介绍</view><text class="support-copy">{{current.introduction || '待按实际说明书补充，不根据药名生成适应症或用量。'}}</text>
+    <view class="support-label">注意事项</view><text class="support-copy">{{current.precautions || '待补充，使用前请核对实际说明书并遵医嘱。'}}</text>
+    <view class="support-label">该药贮藏要求</view><text class="support-copy">{{current.storage || '未录入。先核对包装和说明书，不确定能否分装时请咨询药师。'}}</text>
+    <view class="support-label">资料来源</view><text class="support-copy">{{current.source || '尚未填写'}}{{current.timeLabel ? ' · 更新于 ' + current.timeLabel : ''}}</text>
+    <button class="secondary-btn" bindtap="edit">{{editOpen ? '取消编辑' : '按说明书补充资料'}}</button>
+    <form wx:if="{{editOpen}}" bindsubmit="save">
+      <view class="form-field"><text>规格</text><input name="specification" value="{{current.specification}}" maxlength="100"/></view>
+      <view class="form-field"><text>厂家</text><input name="manufacturer" value="{{current.manufacturer}}" maxlength="100"/></view>
+      <view class="form-field"><text>药品介绍（按实际说明书）</text><textarea name="introduction" value="{{current.introduction}}" maxlength="1000" auto-height/></view>
+      <view class="form-field"><text>注意事项</text><textarea name="precautions" value="{{current.precautions}}" maxlength="1000" auto-height/></view>
+      <view class="form-field"><text>贮藏要求（照录该药说明书）</text><textarea name="storage" value="{{current.storage}}" maxlength="500" auto-height/></view>
+      <view class="form-field"><text>来源（如某厂家说明书、版本日期；有资料时必填）</text><input name="source" value="{{current.source}}" maxlength="200"/></view>
+      <button class="primary-btn" form-type="submit">保存资料</button>
+    </form>
+  </view>
+  <view class="card" wx:if="{{!loading &amp;&amp; !current &amp;&amp; !connectionError}}"><view class="form-note">先添加用药计划，再补充该药介绍和贮藏要求。</view><button class="primary-btn" bindtap="goPlans">去添加计划</button></view>
+  <view class="card"><view class="support-heading">日常储存提示</view><view class="support-tip" wx:for="{{storageTips}}" wx:key="*this">• {{item}}</view><view class="form-note">以下为一般储存知识来源，不能替代具体药品说明书。</view><button class="source-button" wx:for="{{sources}}" wx:key="url" data-url="{{item.url}}" bindtap="copySource">{{item.title}}（复制链接）</button></view>
+  <view class="card"><view class="support-heading">方便取药 · 结构改进方案</view><view class="support-tip" wx:for="{{retrievalTips}}" wx:key="*this">• {{item}}</view></view>
+  <view class="connection-error">{{prototypeNotice}}</view>
+</view>

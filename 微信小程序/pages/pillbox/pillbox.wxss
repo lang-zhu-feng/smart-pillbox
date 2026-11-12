@@ -189,6 +189,11 @@
   margin-top: 12rpx;
 }
 
+.confirm-card { margin-top: 24rpx; }
+.confirm-title { font-size: 29rpx; font-weight: 700; }
+.confirm-note { margin: 12rpx 0; color: #a18b77; font-size: 22rpx; line-height: 1.6; }
+.confirm-card .secondary-btn { width: 100%; }
+
 .tip {
   padding: 24rpx 10rpx;
   color: #a18b77;

@@ -5,6 +5,7 @@ from datetime import datetime, timedelta
 import hashlib
 import hmac
 import json
+import logging
 import os
 from pathlib import Path
 import re
@@ -16,7 +17,9 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, ConfigDict, Field, StrictInt, field_validator, model_validator
-from backend.domain import TZ, SLOTS, now_local, seed_state, rebuild_tasks, tick, add_alert, complete, public_state
+from backend.domain import TZ, SLOTS, REMINDER_INTERVAL_SECONDS, REMINDER_MAX_COUNT, GRACE_SECONDS, now_local, seed_state, rebuild_tasks, tick, add_alert, complete, confirm_reminder, public_state
+from backend.wechat_notifications import WechatNotifications, NotificationError
+from backend.medicine_support import initialize_support, install_support, reconcile_support, clear_support
 
 ROOT = Path(__file__).resolve().parent.parent
 DEMO_PHONE, DEMO_PASSWORD = '13800000000', 'Demo12345'
@@ -74,6 +77,10 @@ class Plan(Payload):
 class Toggle(Payload):
     enabled: bool
 
+class WechatAuthorization(Payload):
+    code: str = Field(min_length=1, max_length=512)
+    templateId: str = Field(min_length=1, max_length=256)
+
 class Elder(Payload):
     name: str = Field(min_length=1, max_length=30)
     age: int = Field(ge=0, le=120)
@@ -90,11 +97,11 @@ class Elder(Payload):
             raise ValueError('单个备注不能超过 30 字')
         return value
 
-class Heartbeat(Payload):
+class DevicePayload(Payload):
     deviceCode: str = Field(min_length=1, max_length=60)
     battery: int | None = Field(default=None, ge=0, le=100)
 
-class DeviceEvent(Heartbeat):
+class DeviceEvent(DevicePayload):
     eventId: str = Field(min_length=1, max_length=80)
     slotKey: str = Field(pattern=r'^(morning|noon|evening)$')
     occurredAt: datetime
@@ -137,6 +144,7 @@ class Database:
                 'CREATE TABLE IF NOT EXISTS device_events (user_id TEXT REFERENCES users(id), event_id TEXT, content TEXT NOT NULL, PRIMARY KEY(user_id, event_id))',
             ]:
                 db.execute(statement)
+            initialize_support(db)
             if not db.execute('SELECT id FROM users WHERE phone=?', (DEMO_PHONE,)).fetchone():
                 self.create_user(db, DEMO_PHONE, '演示家属', DEMO_PASSWORD, True)
 
@@ -151,6 +159,7 @@ class Database:
 
     def save(self, db, user_id, state):
         state['meta']['updatedAt'] = now_local().isoformat(timespec='seconds')
+        reconcile_support(db, user_id, state)
         db.execute('UPDATE states SET content=? WHERE user_id=?', (json.dumps(state, ensure_ascii=False), user_id))
 
     def session(self, db, user_id):
@@ -160,35 +169,57 @@ class Database:
         user = db.execute('SELECT name,is_demo FROM users WHERE id=?', (user_id,)).fetchone()
         return {'token': raw, 'name': user['name'], 'isDemo': bool(user['is_demo'])}
 
-def create_app(db_path=None, clock=None):
+def create_app(db_path=None, clock=None, notification_config=None, notification_transport=None, scheduler_interval=5):
     database = Database(db_path or os.environ.get('MEDGUARD_DB', ROOT / 'backend' / 'data' / 'medguard.sqlite3'))
     current_time = clock or now_local
+    notifications = WechatNotifications(database, current_time, notification_config, notification_transport)
+
+    def advance_rules(dispatch=True):
+        with database.transaction() as db:
+            for row in db.execute('SELECT states.user_id,states.content,users.is_demo FROM states JOIN users ON users.id=states.user_id').fetchall():
+                state = json.loads(row['content'])
+                now = current_time()
+                tick(state, now)
+                notifications.capture(db, row['user_id'], state, now, bool(row['is_demo']))
+                database.save(db, row['user_id'], state)
+        if dispatch:
+            notifications.dispatch()
 
     async def scheduler():
         while True:
-            await asyncio.sleep(5)
-            def advance():
-                with database.transaction() as db:
-                    for row in db.execute('SELECT user_id,content FROM states').fetchall():
-                        state = json.loads(row['content'])
-                        tick(state, current_time())
-                        database.save(db, row['user_id'], state)
-            await asyncio.to_thread(advance)
+            await asyncio.sleep(scheduler_interval)
+            await asyncio.to_thread(advance_rules, False)
+
+    async def notification_scheduler():
+        while True:
+            await asyncio.sleep(scheduler_interval)
+            try:
+                await asyncio.to_thread(notifications.dispatch)
+            except Exception:
+                # Keep rule advancement alive, and never log HTTP URLs or keys.
+                logging.getLogger(__name__).warning('微信通知派发中断；未确认结果不会自动重发。')
 
     @asynccontextmanager
     async def lifespan(app):
         database.initialize()
+        notifications.initialize()
         timer = asyncio.create_task(scheduler())
+        notification_timer = asyncio.create_task(notification_scheduler())
         yield
         timer.cancel()
+        notification_timer.cancel()
         with suppress(asyncio.CancelledError):
             await timer
+        with suppress(asyncio.CancelledError):
+            await notification_timer
 
     app = FastAPI(title='安心药伴 · 家庭用药陪伴', version='0.2.0', lifespan=lifespan)
     app.state.database = database
+    app.state.notifications = notifications
+    app.state.advance_rules = advance_rules
     app.add_middleware(CORSMiddleware, allow_origins=['null'],
         allow_origin_regex=r'https?://(127\.0\.0\.1|localhost)(:\d+)?',
-        allow_methods=['GET', 'POST', 'PATCH'], allow_headers=['Authorization', 'Content-Type'])
+        allow_methods=['GET', 'POST', 'PATCH', 'PUT', 'DELETE'], allow_headers=['Authorization', 'Content-Type'])
 
     def bearer(authorization):
         if not authorization or not authorization.startswith('Bearer '):
@@ -278,6 +309,17 @@ def create_app(db_path=None, clock=None):
     def state(user_id=Depends(family)):
         return change(user_id, lambda state: None)
 
+    @app.get('/api/notifications/wechat')
+    def wechat_notification_status(user_id=Depends(family)):
+        return notifications.status(user_id)
+
+    @app.post('/api/notifications/wechat/authorize')
+    def authorize_wechat_notifications(body: WechatAuthorization, user_id=Depends(family)):
+        try:
+            return notifications.authorize(user_id, body.code, body.templateId)
+        except NotificationError as error:
+            raise HTTPException(error.status, error.message) from None
+
     @app.patch('/api/profile')
     def profile(body: Elder, user_id=Depends(family)):
         return change(user_id, lambda state: state.update(elder=body.model_dump()))
@@ -304,6 +346,29 @@ def create_app(db_path=None, clock=None):
             rebuild_tasks(state, current_time())
         return change(user_id, update)
 
+    @app.put('/api/plans/{plan_id}')
+    def edit_plan(plan_id: str, body: Plan, user_id=Depends(family)):
+        def update(state):
+            plan = next((p for p in state['plans'] if p['id'] == plan_id), None)
+            if not plan:
+                raise HTTPException(404, '没有找到这项计划')
+            details = body.model_dump()
+            if plan['enabled']:
+                validate_slot_time(state, details, plan_id)
+            plan.update(details)
+            rebuild_tasks(state, current_time())
+        return change(user_id, update)
+
+    @app.delete('/api/plans/{plan_id}')
+    def delete_plan(plan_id: str, user_id=Depends(family)):
+        def update(state):
+            plan = next((p for p in state['plans'] if p['id'] == plan_id), None)
+            if not plan:
+                raise HTTPException(404, '没有找到这项计划')
+            state['plans'].remove(plan)
+            rebuild_tasks(state, current_time())
+        return change(user_id, update)
+
     def validate_slot_time(state, candidate, exclude_id=None):
         for plan in state['plans']:
             if plan['id'] != exclude_id and plan['enabled'] and plan['slotKey'] == candidate['slotKey'] and set(plan['days']) & set(candidate['days']) and plan['time'] != candidate['time']:
@@ -322,10 +387,24 @@ def create_app(db_path=None, clock=None):
     def simulate_overdue(task_id: str, user_id=Depends(family)):
         def update(state):
             task = find_task(state, task_id)
-            if task['status'] in ['NO_MEDICATION', 'COMPLETED']:
+            if task['status'] in ['NO_MEDICATION', 'COMPLETED', 'CONFIRMED']:
                 raise HTTPException(409, '请选择尚未完成且有用药计划的药格')
             task.update(status='OVERDUE', demoOverride=True)
             add_alert(state, task, current_time(), 'demo')
+        return change(user_id, update)
+
+    @app.post('/api/tasks/{task_id}/confirm')
+    def confirm_task(task_id: str, user_id=Depends(family)):
+        def update(state):
+            task = find_task(state, task_id)
+            now = current_time()
+            if task['date'] != now.date().isoformat() or task['slotKey'] not in state['device'].get('monitoredSlots', ['morning']):
+                raise HTTPException(409, '只能确认今天已接入门磁的药格')
+            if task['status'] in ['NO_MEDICATION', 'COMPLETED'] or task.get('demoOverride'):
+                raise HTTPException(409, '这次计划无需确认')
+            if now < datetime.fromisoformat(task['startAt']):
+                raise HTTPException(409, '到提醒时间后才能确认')
+            confirm_reminder(state, task, now)
         return change(user_id, update)
 
     @app.post('/api/alerts/read-all')
@@ -348,10 +427,34 @@ def create_app(db_path=None, clock=None):
                 raise HTTPException(409, '已有设备事件，为保护真实记录不能重置；请改用演示账号')
             user = db.execute('SELECT name,is_demo FROM users WHERE id=?', (user_id,)).fetchone()
             original = database.load(db, user_id)
+            clear_support(db, user_id, current_time().isoformat())
             state = seed_state(user['name'], bool(user['is_demo']))
             state['device']['code'] = original['device']['code']
             database.save(db, user_id, state)
             return public_state(state, current_time())
+
+    @app.post('/api/demo/reset-today')
+    def reset_today(user_id=Depends(family)):
+        with database.transaction() as db:
+            now = current_time()
+            today = now.date().isoformat()
+            state = database.load(db, user_id)
+            tick(state, now)
+            state['history'] = [item for item in state['history'] if item.get('date') != today]
+            state['alerts'] = [item for item in state['alerts']
+                               if not item.get('taskKey', '').startswith(today + ':')]
+            for row in db.execute('SELECT event_id,content FROM device_events WHERE user_id=?', (user_id,)).fetchall():
+                if json.loads(row['content']).get('occurredAt', '').startswith(today + 'T'):
+                    db.execute('DELETE FROM device_events WHERE user_id=? AND event_id=?', (user_id, row['event_id']))
+            state['tasks'] = [task for task in state['tasks'] if task['date'] != today]
+            rebuild_tasks(state, now)
+            for task in state['tasks']:
+                if task['date'] == today and task['medicines'] and now >= datetime.fromisoformat(task['startAt']):
+                    task['resetSuppressed'] = True
+            state['meta']['demoResetVersion'] = state['meta'].get('demoResetVersion', 0) + 1
+            state['meta']['demoResetAt'] = now.isoformat()
+            database.save(db, user_id, state)
+            return public_state(state, now)
 
     @app.get('/api/device/integration')
     def integration(user_id=Depends(family)):
@@ -359,9 +462,9 @@ def create_app(db_path=None, clock=None):
             state = database.load(db, user_id)
             configured = bool(db.execute('SELECT 1 FROM device_keys WHERE user_id=?', (user_id,)).fetchone())
         return {'deviceCode': state['device']['code'], 'keyConfigured': configured,
-                'heartbeatPath': '/api/device/heartbeat', 'eventPath': '/api/device/events',
-                'schedulePath': '/api/device/schedule', 'heartbeatIntervalSeconds': 30,
-                'offlineAfterSeconds': 90, 'hardwareReady': state['device']['hasConnected']}
+                'eventPath': '/api/device/events', 'schedulePath': '/api/device/schedule',
+                'hardwareReady': state['device']['hasConnected'],
+                'monitoredSlots': state['device'].get('monitoredSlots', ['morning'])}
 
     @app.post('/api/device/credentials')
     def credentials(user_id=Depends(family)):
@@ -373,22 +476,14 @@ def create_app(db_path=None, clock=None):
         return {'deviceCode': state['device']['code'], 'deviceToken': raw,
                 'message': '密钥仅显示这一次；重新生成后旧密钥立即失效'}
 
-    @app.post('/api/device/heartbeat')
-    def heartbeat(body: Heartbeat, owner=Depends(device)):
-        if body.deviceCode != owner['device_code']:
-            raise HTTPException(403, '设备编号与密钥不匹配')
-        def update(state):
-            state['device'].update(lastHardwareSeen=current_time().isoformat(), hasConnected=True)
-            if body.battery is not None:
-                state['device']['battery'] = body.battery
-        return {'ok': True, 'device': change(owner['user_id'], update)['device']}
-
     @app.get('/api/device/schedule')
     def schedule(owner=Depends(device)):
         state = change(owner['user_id'], lambda state: None)
         return {'deviceCode': owner['device_code'], 'serverTime': current_time().isoformat(),
+                'demoResetVersion': state['meta'].get('demoResetVersion', 0),
                 'tasks': [t for t in state['tasks'] if t['date'] == current_time().date().isoformat()],
-                'reminderPolicy': {'intervalSeconds': 600, 'maxCount': 3, 'graceSeconds': 900}}
+                'reminderPolicy': {'intervalSeconds': REMINDER_INTERVAL_SECONDS,
+                                   'maxCount': REMINDER_MAX_COUNT, 'graceSeconds': GRACE_SECONDS}}
 
     @app.post('/api/device/events')
     def events(body: DeviceEvent, owner=Depends(device)):
@@ -400,6 +495,9 @@ def create_app(db_path=None, clock=None):
         with database.transaction() as db:
             state = database.load(db, owner['user_id'])
             tick(state, now)
+            reset_at = state['meta'].get('demoResetAt')
+            if reset_at and body.occurredAt <= datetime.fromisoformat(reset_at):
+                raise HTTPException(409, '演示重置之前的开盒事件已作废')
             existing = db.execute('SELECT content FROM device_events WHERE user_id=? AND event_id=?',
                                   (owner['user_id'], body.eventId)).fetchone()
             if existing:
@@ -411,6 +509,8 @@ def create_app(db_path=None, clock=None):
                 raise HTTPException(422, '该事件不属于当前展示周，请核对设备时间')
             if task['status'] == 'NO_MEDICATION':
                 raise HTTPException(409, '这个药格没有计划，事件未作为用药完成记录')
+            if body.occurredAt < datetime.fromisoformat(task['startAt']):
+                raise HTTPException(409, '计划开始前开盒，不计为本次用药开盒')
             complete(state, task, body.occurredAt, 'hardware', body.eventId)
             state['device'].update(lastHardwareSeen=now.isoformat(), hasConnected=True)
             if body.battery is not None:
@@ -418,6 +518,8 @@ def create_app(db_path=None, clock=None):
             db.execute('INSERT INTO device_events VALUES (?,?,?)', (owner['user_id'], body.eventId, body.model_dump_json()))
             database.save(db, owner['user_id'], state)
         return {'ok': True, 'duplicate': False, 'matched': True, 'taskId': task['id']}
+
+    install_support(app, database, family, current_time)
 
     asset_dir = ROOT / '微信小程序' / 'assets'
     if asset_dir.exists():
@@ -427,7 +529,7 @@ def create_app(db_path=None, clock=None):
     @app.get('/preview', include_in_schema=False)
     @app.get('/preview.html', include_in_schema=False)
     def preview():
-        return FileResponse(ROOT / '微信小程序' / 'preview.html')
+        return FileResponse(ROOT / '微信小程序' / 'preview.html', headers={'Cache-Control': 'no-store'})
 
     return app
 

@@ -18,7 +18,7 @@
   </view>
 
   <view class="record-card" wx:for="{{history}}" wx:key="id">
-    <view class="record-icon {{item.statusClass}}">{{item.result === 'COMPLETED' ? '✓' : '!'}}</view>
+    <view class="record-icon {{item.statusClass}}">{{item.result === 'COMPLETED' || item.result === 'CONFIRMED' ? '✓' : '!'}}</view>
     <view class="record-main">
       <view class="record-head">
         <view>{{item.date}} · {{item.slot}}</view>
