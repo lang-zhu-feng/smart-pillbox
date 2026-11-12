@@ -26,8 +26,7 @@ project.private.config.json
 
 # Locally installed Arduino IDE and vendor drivers are not project source
 /硬件/Arduino IDE/
-/硬件/驱动/*
-!/硬件/驱动/.gitkeep
+/硬件/驱动/
 
 # Local configuration and private keys; keep safe example configurations
 .env
